@@ -4,7 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import uk.gov.hmcts.cp.entities.ExampleEntity;
-import uk.gov.hmcts.cp.openapi.model.ExampleResponse;
+
+import uk.gov.hmcts.cp.openapi.model.AuditReportRequest
+
+import uk.gov.hmcts.cp.openapi.api.AuditReportsApi
 
 @FunctionalInterface
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
