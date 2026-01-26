@@ -63,6 +63,9 @@ jwt:
   filter:
     enabled: false
 
+service:
+  base-url: 'http://localhost/'
+
 logging:
   level:
     root: INFO
