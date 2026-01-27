@@ -8,6 +8,7 @@ import uk.gov.hmcts.cp.properties.ClientProperties;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public interface ClientHelper {
 
@@ -19,10 +20,22 @@ public interface ClientHelper {
             String filter,
             String value
     ) {
-        return getRecords(restClient, props, Map.of(filter, List.of(value)));
+        return getRecordsWithParams(restClient, props, Map.of(filter, value));
     }
 
-    static <T> List<T> getRecords(
+    static <T> List<T> getRecordsWithParams(
+            RestClient restClient,
+            ClientProperties props,
+            Map<String, String> queryParams
+    ) {
+        return getRecordsWithMultiParams(restClient, props, queryParams.entrySet().stream().
+                collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> List.of(entry.getValue())
+                )));
+    }
+
+    static <T> List<T> getRecordsWithMultiParams(
             RestClient restClient,
             ClientProperties props,
             Map<String, List<String>> queryParams

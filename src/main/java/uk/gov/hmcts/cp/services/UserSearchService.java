@@ -26,10 +26,7 @@ public record UserSearchService(
 
     private List<User> getUsers(String filter, String value) {
 
-        return ClientHelper.getRecords(restClient, settings.users(),
-                Map.of(
-                        filter, List.of(value),
-                        "targetType", List.of("CASE_ID")
-                ));
+        return ClientHelper.getRecordsWithParams(restClient, settings.users(),
+                Map.of(filter, value, "targetType", "CASE_ID"));
     }
 }
