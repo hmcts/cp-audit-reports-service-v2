@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.hmcts.cp.entities.ExampleEntity;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 import static org.hamcrest.Matchers.containsString;

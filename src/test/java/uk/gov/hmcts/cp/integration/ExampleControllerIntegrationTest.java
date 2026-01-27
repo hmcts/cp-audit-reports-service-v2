@@ -3,7 +3,6 @@ package uk.gov.hmcts.cp.integration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.hmcts.cp.entities.ExampleEntity;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

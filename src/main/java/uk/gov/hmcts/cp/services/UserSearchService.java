@@ -1,25 +1,35 @@
 package uk.gov.hmcts.cp.services;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.entities.User;
+import uk.gov.hmcts.cp.properties.ServiceProperties;
+import uk.gov.hmcts.cp.utility.ClientHelper;
 
 import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import java.util.Map;
 
 @Component
-public record UserSearchService(RestClient restClient) {
+public record UserSearchService(
+        RestClient restClient,
+        ServiceProperties settings
+) {
+    public List<User> getUsersByIds(String userIds) {
 
-    public List<User> getUsersByEmails(String emails, String correlationId) {
+        return getUsers("userIds", userIds);
+    }
 
-        //@TODO: correlation?, header user
+    public List<User> getUsersByEmails(String emails) {
 
+        return getUsers("emails", emails);
+    }
 
-        return restClient.get().
-                uri("usersgroups-query-api/query/api/rest/usersgroups/usersemails?emails={emails}", emails).
-                accept(APPLICATION_JSON).
-                retrieve().body(new ParameterizedTypeReference<>() {});
+    private List<User> getUsers(String filter, String value) {
+
+        return ClientHelper.getRecords(restClient, settings.users(),
+                Map.of(
+                        filter, List.of(value),
+                        "targetType", List.of("CASE_ID")
+                ));
     }
 }

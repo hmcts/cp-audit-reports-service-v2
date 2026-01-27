@@ -6,8 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.cp.entities.ExampleEntity;
-import uk.gov.hmcts.cp.mappers.ExampleMapper;
 import uk.gov.hmcts.cp.mappers.ExampleMapperImpl;
 import uk.gov.hmcts.cp.openapi.model.ExampleResponse;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;

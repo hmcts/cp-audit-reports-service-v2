@@ -1,0 +1,39 @@
+package uk.gov.hmcts.cp.utility;
+
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestClient;
+import uk.gov.hmcts.cp.properties.ClientProperties;
+
+import java.util.List;
+import java.util.Map;
+
+public interface ClientHelper {
+
+//  private static final String HEADER_CORRELATION_ID = "CPPCLIENTCORRELATIONID";
+
+    static <T> List<T> getRecords(
+            RestClient restClient,
+            ClientProperties props,
+            String filter,
+            String value
+    ) {
+        return getRecords(restClient, props, Map.of(filter, List.of(value)));
+    }
+
+    static <T> List<T> getRecords(
+            RestClient restClient,
+            ClientProperties props,
+            Map<String, List<String>> queryParams
+    ) {
+      return restClient.
+                get().uri(builder -> builder.
+                      path(props.path()).
+                      queryParams(CollectionUtils.toMultiValueMap(queryParams)).
+                      build()).
+                accept(new MediaType(props.media().type(), props.media().subType())).
+//              header(HEADER_CORRELATION_ID, "correlationId").
+                retrieve().body(new ParameterizedTypeReference<>() {});
+    }
+}

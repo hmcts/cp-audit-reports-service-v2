@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.HttpClientErrorException;
-import uk.gov.hmcts.cp.entities.ExampleEntity;
 import uk.gov.hmcts.cp.filters.jwt.JWTService;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;
 

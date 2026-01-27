@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.hmcts.cp.entities.ExampleEntity;
 import uk.gov.hmcts.cp.repositories.ExampleRepository;
 
 import java.io.ByteArrayOutputStream;

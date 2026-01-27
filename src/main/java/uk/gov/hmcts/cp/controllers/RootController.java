@@ -16,6 +16,7 @@ public class RootController implements RootApi {
 
     @Override
     public ResponseEntity<String> getRoot() {
+
         log.info("START");
         return ResponseEntity.ok("Hello " + jwtToken.getUserName());
     }
