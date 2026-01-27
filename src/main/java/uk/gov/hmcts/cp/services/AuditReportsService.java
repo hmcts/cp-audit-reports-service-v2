@@ -6,7 +6,7 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 
 @Component
 public record AuditReportsService(
-        RestClient restClient,
-        ServiceProperties settings
+//        RestClient restClient,
+//        ServiceProperties settings
 ) {
 }
