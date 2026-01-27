@@ -13,12 +13,12 @@ public record CaseSearchService(
         RestClient restClient,
         ServiceProperties settings
 ) {
-    public List<Case> geCasesByIds(String caseIds) {
+    public List<Case> getCasesByIds(String caseIds) {
 
         return getCases("targetId", caseIds);
     }
 
-    public List<Case> geCasesByUrns(String caseUrns) {
+    public List<Case> getCasesByUrns(String caseUrns) {
 
         return getCases("sourceId", caseUrns);
     }

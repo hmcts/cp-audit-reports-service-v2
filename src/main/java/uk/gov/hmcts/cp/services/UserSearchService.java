@@ -7,7 +7,6 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 import uk.gov.hmcts.cp.utility.ClientHelper;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public record UserSearchService(
@@ -26,7 +25,6 @@ public record UserSearchService(
 
     private List<User> getUsers(String filter, String value) {
 
-        return ClientHelper.getRecordsWithParams(restClient, settings.users(),
-                Map.of(filter, value, "targetType", "CASE_ID"));
+        return ClientHelper.getRecords(restClient, settings.users(), filter, value);
     }
 }

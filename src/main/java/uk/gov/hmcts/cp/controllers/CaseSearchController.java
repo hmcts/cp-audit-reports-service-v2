@@ -26,14 +26,14 @@ public record CaseSearchController(
     public ResponseEntity<GetCaseUrns200Response> getCaseIds(@NotNull @Valid String caseUrns) {
 
         log.info("getCaseIds({})", caseUrns);
-        return responseOk(service.geCasesByUrns(caseUrns));
+        return responseOk(service.getCasesByUrns(caseUrns));
     }
 
     @Override
     public ResponseEntity<GetCaseUrns200Response> getCaseUrns(@NotNull @Valid String caseIds) {
 
         log.info("getCaseUrns({})", caseIds);
-        return responseOk(service.geCasesByIds(caseIds));
+        return responseOk(service.getCasesByIds(caseIds));
     }
 
     private ResponseEntity<GetCaseUrns200Response> responseOk(List<Case> cases) {
