@@ -40,7 +40,6 @@ springBoot {
 }
 
 dependencies {
-//  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.1")
   implementation("uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-70abc99")
 
   // --- Observability / Actuator / OTEL / Prometheus ---

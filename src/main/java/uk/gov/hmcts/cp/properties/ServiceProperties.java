@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties("service")
 public record ServiceProperties(
     String baseUrl,
-    String cjsCppUid,
+    String cjsCpUid,
     @NestedConfigurationProperty ClientProperties users,
     @NestedConfigurationProperty ClientProperties cases,
     @NestedConfigurationProperty ClientProperties mappings
