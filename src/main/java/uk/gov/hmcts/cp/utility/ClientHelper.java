@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public interface ClientHelper {
 
-//  private static final String HEADER_CORRELATION_ID = "CPPCLIENTCORRELATIONID";
+    String HEADER_CORRELATION_ID = "CPCLIENTCORRELATIONID";
 
     static <T> List<T> getRecords(
             RestClient restClient,
@@ -46,7 +46,7 @@ public interface ClientHelper {
                       queryParams(CollectionUtils.toMultiValueMap(queryParams)).
                       build()).
                 accept(new MediaType(props.media().type(), props.media().subType())).
-//              header(HEADER_CORRELATION_ID, "correlationId").
+                header(HEADER_CORRELATION_ID, "correlationId").
                 retrieve().body(new ParameterizedTypeReference<>() {});
     }
 }
