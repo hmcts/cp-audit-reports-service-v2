@@ -14,7 +14,7 @@ public record MaterialSearchService(
         RestClient restClient,
         ServiceProperties settings
 ) {
-    public List<Material> getMaterialCases(String materialIds) {
+    public List<Material> getMaterialCases(final String materialIds) {
 
         return ClientHelper.getRecordsWithParams(restClient, settings.mappings(),
                 Map.of("materialIds", materialIds, "targetType", "CASE_ID"));

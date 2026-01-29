@@ -13,17 +13,17 @@ public record CaseSearchService(
         RestClient restClient,
         ServiceProperties settings
 ) {
-    public List<Case> getCasesByIds(String caseIds) {
+    public List<Case> getCasesByIds(final String caseIds) {
 
         return getCases("targetId", caseIds);
     }
 
-    public List<Case> getCasesByUrns(String caseUrns) {
+    public List<Case> getCasesByUrns(final String caseUrns) {
 
         return getCases("sourceId", caseUrns);
     }
 
-    private List<Case> getCases(String filter, String value) {
+    private List<Case> getCases(final String filter, final String value) {
 
         return ClientHelper.getRecords(restClient, settings.cases(), filter, value);
     }

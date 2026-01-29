@@ -33,3 +33,6 @@ applicationinsights-agent-*.jar
 
 .DS_Store
 */.DS_Store
+
+codeql.db/
+results.sarif

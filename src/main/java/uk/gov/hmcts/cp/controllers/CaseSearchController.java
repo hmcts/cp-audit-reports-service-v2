@@ -26,20 +26,20 @@ public record CaseSearchController(
 ) implements CaseSearchApi {
 
     @Override
-    public ResponseEntity<GetCaseUrns200Response> getCaseIds(@NotNull @Valid String caseUrns) {
+    public ResponseEntity<GetCaseUrns200Response> getCaseIds(@NotNull @Valid final String caseUrns) {
 
-        log.info("getCaseIds({})", caseUrns);
+        log.info("getCaseIds");
         return responseOk(service.getCasesByUrns(caseUrns));
     }
 
     @Override
-    public ResponseEntity<GetCaseUrns200Response> getCaseUrns(@NotNull @Valid String caseIds) {
+    public ResponseEntity<GetCaseUrns200Response> getCaseUrns(@NotNull @Valid final String caseIds) {
 
-        log.info("getCaseUrns({})", caseIds);
+        log.info("getCaseUrns");
         return responseOk(service.getCasesByIds(caseIds));
     }
 
-    private ResponseEntity<GetCaseUrns200Response> responseOk(List<Case> cases) {
+    private ResponseEntity<GetCaseUrns200Response> responseOk(final List<Case> cases) {
 
         return ServiceHelper.responseOk(cases, mapper::mapCaseToResult,
                 results -> GetCaseUrns200Response.

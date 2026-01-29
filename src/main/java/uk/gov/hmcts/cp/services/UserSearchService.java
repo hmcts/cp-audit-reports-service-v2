@@ -13,17 +13,17 @@ public record UserSearchService(
         RestClient restClient,
         ServiceProperties settings
 ) {
-    public List<User> getUsersByIds(String userIds) {
+    public List<User> getUsersByIds(final String userIds) {
 
         return getUsers("userIds", userIds);
     }
 
-    public List<User> getUsersByEmails(String emails) {
+    public List<User> getUsersByEmails(final String emails) {
 
         return getUsers("emails", emails);
     }
 
-    private List<User> getUsers(String filter, String value) {
+    private List<User> getUsers(final String filter, final String value) {
 
         return ClientHelper.getRecords(restClient, settings.users(), filter, value);
     }

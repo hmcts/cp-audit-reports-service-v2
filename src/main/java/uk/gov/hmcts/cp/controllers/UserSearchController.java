@@ -26,20 +26,20 @@ public record UserSearchController(
 ) implements UserSearchApi {
 
     @Override
-    public ResponseEntity<GetUserIds200Response> getUserEmails(@NotNull @Valid String userIds) {
+    public ResponseEntity<GetUserIds200Response> getUserEmails(@NotNull @Valid final String userIds) {
 
-        log.info("getUserEmails({})", userIds);
+        log.info("getUserEmails");
         return responseOk(service.getUsersByIds(userIds));
     }
 
     @Override
-    public ResponseEntity<GetUserIds200Response> getUserIds(@NotNull @Valid String emails) {
+    public ResponseEntity<GetUserIds200Response> getUserIds(@NotNull @Valid final String emails) {
 
-        log.info("getUserIds({})", emails);
+        log.info("getUserIds");
         return responseOk(service.getUsersByEmails(emails));
     }
 
-    private ResponseEntity<GetUserIds200Response> responseOk(List<User> users) {
+    private ResponseEntity<GetUserIds200Response> responseOk(final List<User> users) {
 
         return ServiceHelper.responseOk(users, mapper::mapUserToResult,
                 results -> GetUserIds200Response.

@@ -26,13 +26,13 @@ public record MaterialSearchController(
 ) implements MaterialSearchApi {
 
     @Override
-    public ResponseEntity<GetCaseIdsForMaterialIds200Response> getCaseIdsForMaterialIds(@NotNull @Valid String materialIds) {
+    public ResponseEntity<GetCaseIdsForMaterialIds200Response> getCaseIdsForMaterialIds(@NotNull @Valid final String materialIds) {
 
-        log.info("getCaseIdsForMaterialIds({})", materialIds);
+        log.info("getCaseIdsForMaterialIds");
         return responseOk(service.getMaterialCases(materialIds));
     }
 
-    private ResponseEntity<GetCaseIdsForMaterialIds200Response> responseOk(List<Material> cases) {
+    private ResponseEntity<GetCaseIdsForMaterialIds200Response> responseOk(final List<Material> cases) {
 
         return ServiceHelper.responseOk(cases, mapper::mapMaterialToResult,
                 results -> GetCaseIdsForMaterialIds200Response.

@@ -11,7 +11,7 @@ public class Client {
     private static final String HEADER_USER = "CJSCPUID";
 
     @Bean
-    public RestClient restClient(ServiceProperties settings) {
+    public RestClient restClient(final ServiceProperties settings) {
 
         return RestClient.builder().
                 baseUrl(settings.baseUrl()).
