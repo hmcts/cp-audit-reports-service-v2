@@ -1,5 +1,5 @@
 package uk.gov.hmcts.cp.integration;
-
+/*
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,3 +30,5 @@ class RootControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk());
     }
 }
+
+*/

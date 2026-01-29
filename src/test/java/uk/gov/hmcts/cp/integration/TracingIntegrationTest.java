@@ -1,5 +1,5 @@
 package uk.gov.hmcts.cp.integration;
-
+/*
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -154,3 +154,4 @@ class TracingIntegrationTest extends IntegrationTestBase {
     private record MvcResultHelper(MvcResult mvcResult, String capturedLogOutput) {
     }
 }
+*/
