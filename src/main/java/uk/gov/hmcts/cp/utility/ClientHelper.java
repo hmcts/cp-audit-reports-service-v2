@@ -15,18 +15,18 @@ public interface ClientHelper {
     String HEADER_CORRELATION_ID = "CPCLIENTCORRELATIONID";
 
     static <T> List<T> getRecords(
-            RestClient restClient,
-            ClientProperties props,
-            String filter,
-            String value
+            final RestClient restClient,
+            final ClientProperties props,
+            final String filter,
+            final String value
     ) {
         return getRecordsWithParams(restClient, props, Map.of(filter, value));
     }
 
     static <T> List<T> getRecordsWithParams(
-            RestClient restClient,
-            ClientProperties props,
-            Map<String, String> queryParams
+            final RestClient restClient,
+            final ClientProperties props,
+            final Map<String, String> queryParams
     ) {
         return getRecordsWithMultiParams(restClient, props, queryParams.entrySet().stream().
                 collect(Collectors.toMap(
@@ -36,9 +36,9 @@ public interface ClientHelper {
     }
 
     static <T> List<T> getRecordsWithMultiParams(
-            RestClient restClient,
-            ClientProperties props,
-            Map<String, List<String>> queryParams
+            final RestClient restClient,
+            final ClientProperties props,
+            final Map<String, List<String>> queryParams
     ) {
       return restClient.
                 get().uri(builder -> builder.
