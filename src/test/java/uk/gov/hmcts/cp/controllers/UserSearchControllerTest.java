@@ -27,7 +27,7 @@ class UserSearchControllerTest {
 
     UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
-    List<User> cases = List.of(
+    List<User> users = List.of(
             new User("userId1", "firstName1", "lastName1", "email1"),
             new User("userId2", "firstName2", "lastName2", "email2"),
             new User("userId3", "firstName3", "lastName3", "email3")
@@ -44,7 +44,7 @@ class UserSearchControllerTest {
         // Given
         when(service.getUsersByIds(anyString())).thenAnswer(invocation -> {
             var userIds = split(invocation.getArgument(0));
-            return cases.stream().filter(user -> userIds.contains(user.userId())).toList();
+            return users.stream().filter(user -> userIds.contains(user.userId())).toList();
         });
 
         // When
@@ -75,7 +75,7 @@ class UserSearchControllerTest {
         // Given
         when(service.getUsersByEmails(anyString())).thenAnswer(invocation -> {
             var emails = split(invocation.getArgument(0));
-            return cases.stream().filter(user -> emails.contains(user.email())).toList();
+            return users.stream().filter(user -> emails.contains(user.email())).toList();
         });
 
         // When
