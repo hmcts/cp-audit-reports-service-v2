@@ -30,6 +30,12 @@ apply {
   from("$rootDir/gradle/github/docker.gradle")
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
+
 springBoot {
   buildInfo {
     properties {
