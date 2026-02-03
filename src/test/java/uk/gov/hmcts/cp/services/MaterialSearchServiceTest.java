@@ -41,7 +41,7 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
         var result = underTest.getMaterialCases("materialId1,materialId2");
 
         // Then
-        assertEquals("path?materialIds=materialId1,materialId2&targetType=CASE_ID", calledUri);
+        assertEquals("path?materialIds=materialId1,materialId2", calledUri);
         assertSame(materials, result);
     }
 }

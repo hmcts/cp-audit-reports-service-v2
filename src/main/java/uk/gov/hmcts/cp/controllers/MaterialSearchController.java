@@ -11,7 +11,7 @@ import uk.gov.hmcts.cp.mappers.MaterialMapper;
 import uk.gov.hmcts.cp.openapi.api.MaterialSearchApi;
 import uk.gov.hmcts.cp.openapi.model.GetCaseIdsForMaterialIds200Response;
 import uk.gov.hmcts.cp.services.MaterialSearchService;
-import uk.gov.hmcts.cp.utility.ServiceHelper;
+import uk.gov.hmcts.cp.utility.ControllerHelper;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public record MaterialSearchController(
 
     private ResponseEntity<GetCaseIdsForMaterialIds200Response> responseOk(final List<Material> cases) {
 
-        return ServiceHelper.responseOk(cases, mapper::mapMaterialToResult,
+        return ControllerHelper.responseOk(cases, mapper::mapMaterialToResult,
                 results -> GetCaseIdsForMaterialIds200Response.
                         builder().results(results).build());
     }

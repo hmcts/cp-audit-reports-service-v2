@@ -11,7 +11,7 @@ import uk.gov.hmcts.cp.mappers.UserMapper;
 import uk.gov.hmcts.cp.openapi.api.UserSearchApi;
 import uk.gov.hmcts.cp.openapi.model.GetUserIds200Response;
 import uk.gov.hmcts.cp.services.UserSearchService;
-import uk.gov.hmcts.cp.utility.ServiceHelper;
+import uk.gov.hmcts.cp.utility.ControllerHelper;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public record UserSearchController(
 
     private ResponseEntity<GetUserIds200Response> responseOk(final List<User> users) {
 
-        return ServiceHelper.responseOk(users, mapper::mapUserToResult,
+        return ControllerHelper.responseOk(users, mapper::mapUserToResult,
                 results -> GetUserIds200Response.
                         builder().results(results).build());
     }

@@ -11,7 +11,7 @@ import uk.gov.hmcts.cp.mappers.CaseMapper;
 import uk.gov.hmcts.cp.openapi.api.CaseSearchApi;
 import uk.gov.hmcts.cp.openapi.model.GetCaseUrns200Response;
 import uk.gov.hmcts.cp.services.CaseSearchService;
-import uk.gov.hmcts.cp.utility.ServiceHelper;
+import uk.gov.hmcts.cp.utility.ControllerHelper;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public record CaseSearchController(
 
     private ResponseEntity<GetCaseUrns200Response> responseOk(final List<Case> cases) {
 
-        return ServiceHelper.responseOk(cases, mapper::mapCaseToResult,
+        return ControllerHelper.responseOk(cases, mapper::mapCaseToResult,
                 results -> GetCaseUrns200Response.
                         builder().results(results).build());
     }

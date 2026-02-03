@@ -8,7 +8,7 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 @Configuration
 public class Client {
 
-    private static final String HEADER_USER = "CJSCPUID";
+    private static final String HEADER_USER = "CJSCPPUID";
 
     @Bean
     public RestClient restClient(final ServiceProperties settings) {

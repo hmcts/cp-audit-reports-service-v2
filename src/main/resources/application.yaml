@@ -64,8 +64,8 @@ jwt:
     enabled: false
 
 service:
-  base-url: ${CP_CAR_URL:http://localhost:8080/}
-  cjs-cp-uid: ${CPP_CAR_CJSCPUID_HEADER:CJSCPUID}
+  base-url: ${CP_CAR_BASE_URL:http://localhost:8080/}
+  cjs-cp-uid: ${CP_CAR_CJSCPPUID_HEADER:CJSCPPUID}
   users:
     path: 'usersgroups-query-api/query/api/rest/usersgroups/users'
     media:

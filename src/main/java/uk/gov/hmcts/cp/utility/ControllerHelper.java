@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.function.Function;
 
-public interface ServiceHelper {
+public interface ControllerHelper {
 
     static <T, R, E> ResponseEntity<E> responseOk(
             final List<T> list,

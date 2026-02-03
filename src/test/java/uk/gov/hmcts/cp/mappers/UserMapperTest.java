@@ -12,13 +12,13 @@ public class UserMapperTest {
     @Test
     void test_UserMapper() {
 
-        UserMapper caseMapper = Mappers.getMapper(UserMapper.class);
+        UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
         // Given
         User user = new User("`123", "John", "Smith", "no@where.com");
 
         // When
-        UserSearchResult result = caseMapper.mapUserToResult(user);
+        UserSearchResult result = userMapper.mapUserToResult(user);
 
         // Then
         assertThat(result.getEmail()).isEqualTo(user.email());

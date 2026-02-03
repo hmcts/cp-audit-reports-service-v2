@@ -41,7 +41,7 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
         var result = underTest.getCasesByIds("caseId1,caseId2");
 
         // Then
-        assertEquals("path?targetId=caseId1,caseId2", calledUri);
+        assertEquals("path?targetId=caseId1,caseId2&targetType=CASE_ID", calledUri);
         assertSame(cases, result);
     }
 
@@ -56,7 +56,7 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
         var result = underTest.getCasesByUrns("caseUrn1,caseUrn2");
 
         // Then
-        assertEquals("path?sourceId=caseUrn1,caseUrn2", calledUri);
+        assertEquals("path?sourceId=caseUrn1,caseUrn2&targetType=CASE_ID", calledUri);
         assertSame(cases, result);
     }
 }

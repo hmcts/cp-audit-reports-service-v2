@@ -7,6 +7,7 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 import uk.gov.hmcts.cp.utility.ClientHelper;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public record CaseSearchService(
@@ -25,6 +26,7 @@ public record CaseSearchService(
 
     private List<Case> getCases(final String filter, final String value) {
 
-        return ClientHelper.getRecords(restClient, settings.cases(), filter, value);
+        return ClientHelper.getRecordsWithParams(restClient, settings.cases(),
+                Map.of(filter, value, "targetType", "CASE_ID"));
     }
 }
