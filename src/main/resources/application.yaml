@@ -63,6 +63,25 @@ jwt:
   filter:
     enabled: false
 
+service:
+  base-url: ${CP_CAR_BASE_URL:http://localhost:8080/}
+  cjs-cp-uid: ${CP_CAR_CJSCPPUID_HEADER:CJSCPPUID}
+  users:
+    path: 'usersgroups-query-api/query/api/rest/usersgroups/users'
+    media:
+      type: 'application'
+      sub-type: 'vnd.usersgroups.search-users+json'
+  cases:
+    path: 'progression-query-api/query/api/rest/progression/materials/cases'
+    media:
+      type: 'application'
+      sub-type: 'vnd.progression.query.material-bulk+json'
+  mappings:
+    path: 'system-id-mapper-api/rest/systemid/mappings/bulk'
+    media:
+      type: 'application'
+      sub-type: 'vnd.systemid.mappings+json'
+
 logging:
   level:
     root: INFO

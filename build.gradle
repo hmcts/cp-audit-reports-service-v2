@@ -1,7 +1,7 @@
 plugins {
   id 'application'
   id 'java'
-  id 'org.springframework.boot' version '4.0.0'
+  id 'org.springframework.boot' version '4.0.2'
   id 'io.spring.dependency-management' version '1.1.7'
   id 'jacoco'
   id 'maven-publish'
@@ -30,6 +30,12 @@ apply {
   from("$rootDir/gradle/github/docker.gradle")
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
+
 springBoot {
   buildInfo {
     properties {
@@ -40,11 +46,11 @@ springBoot {
 }
 
 dependencies {
-  implementation("uk.gov.hmcts.cp:api-hmcts-crime-template:2.0.1")
+  implementation("uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-70abc99")
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.hibernate.validator:hibernate-validator'
+  implementation 'org.hibernate.validator:hibernate-validator'
   implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
   implementation 'io.jsonwebtoken:jjwt:0.13.0'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
