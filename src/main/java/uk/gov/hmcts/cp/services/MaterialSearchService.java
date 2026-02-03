@@ -7,7 +7,6 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 import uk.gov.hmcts.cp.utility.ClientHelper;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public record MaterialSearchService(
