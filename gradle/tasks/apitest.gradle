@@ -58,6 +58,6 @@ dependencies {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
   apiTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-  apiTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-  apiTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  apiTestCompileOnly "org.projectlombok:lombok:$lombokVersion"
+  apiTestAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }
