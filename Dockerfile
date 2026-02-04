@@ -1,6 +1,6 @@
 # ---- Base image (default fallback) ----
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-eclipse-temurin:21-jdk}
+FROM ${BASE_IMAGE:-eclipse-temurin:21-jre-alpine}
 
 # minimal runtime tooling for healthcheck
 RUN apk add --no-cache curl
