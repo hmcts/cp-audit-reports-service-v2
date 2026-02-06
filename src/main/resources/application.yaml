@@ -1,6 +1,6 @@
 spring:
   application:
-    name: service-UPDATE-TO-BE-NAME-OF-SERVICE
+    name: cp-audit-reports-service-v2
   datasource:
     url: ${APP_NAME_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
     username: ${APP_NAME_DATASOURCE_USERNAME:postgres}
