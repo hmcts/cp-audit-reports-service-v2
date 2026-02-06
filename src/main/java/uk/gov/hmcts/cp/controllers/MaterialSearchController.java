@@ -20,7 +20,6 @@ public class MaterialSearchController
         implements MaterialSearchApi
 {
     public MaterialSearchController(final MaterialSearchService service, final MaterialMapper mapper) {
-
         super(service, mapper, GetCaseIdsForMaterialIds200Response::new);
     }
 

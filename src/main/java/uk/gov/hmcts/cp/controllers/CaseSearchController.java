@@ -20,7 +20,6 @@ public class CaseSearchController
         implements CaseSearchApi
 {
     public CaseSearchController(final CaseSearchService service, final CaseMapper mapper) {
-
         super(service, mapper, GetCaseUrns200Response::new);
     }
 

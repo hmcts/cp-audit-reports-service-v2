@@ -20,7 +20,6 @@ public class UserSearchController
         implements UserSearchApi
 {
     public UserSearchController(final UserSearchService service, final UserMapper mapper) {
-
         super(service, mapper, GetUserIds200Response::new);
     }
 

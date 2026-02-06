@@ -13,7 +13,9 @@ public class SearchControllerBase<V, S, T, R> {
     private final Converter<S, T> converter;
     private final Function<List<T>, R> toResponse;
 
-    protected SearchControllerBase(V service, Converter<S, T> converter, Function<List<T>, R> toResponse) {
+    protected SearchControllerBase(final V service,
+                                   final Converter<S, T> converter,
+                                   final Function<List<T>, R> toResponse) {
 
         this.service = service;
         this.converter = converter;
