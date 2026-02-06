@@ -9,6 +9,7 @@ import uk.gov.hmcts.cp.openapi.model.ErrorResponse;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,9 +26,8 @@ public class GlobalExceptionHandler {
 
         final ErrorResponse error = ErrorResponse.builder()
                 .error(String.valueOf(responseStatusException.getStatusCode().value()))
-                .message(responseStatusException.getReason() != null
-                        ? responseStatusException.getReason()
-                        : responseStatusException.getMessage())
+                .message(Optional.ofNullable(responseStatusException.getReason()).
+                        orElseGet(responseStatusException::getMessage))
                 .timestamp(Instant.now())
                 .traceId(Objects.requireNonNull(tracer.currentSpan()).context().traceId())
                 .build();

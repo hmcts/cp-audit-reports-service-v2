@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.cp.controllers.TestHelper.split;
+import static uk.gov.hmcts.cp.controllers.utility.SearchControllerTestHelper.filter;
 
 @ExtendWith(MockitoExtension.class)
 class UserSearchControllerTest {
@@ -35,17 +35,14 @@ class UserSearchControllerTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new UserSearchController(mapper, service);
+        underTest = new UserSearchController(service, mapper);
     }
 
     @Test
     void test_getUserEmails() {
 
         // Given
-        when(service.getUsersByIds(anyString())).thenAnswer(invocation -> {
-            var userIds = split(invocation.getArgument(0));
-            return users.stream().filter(user -> userIds.contains(user.userId())).toList();
-        });
+        when(service.getUsersByIds(anyString())).thenAnswer(filter(users, User::userId));
 
         // When
         var result = underTest.getUserEmails("userId1,userId2");
@@ -73,10 +70,7 @@ class UserSearchControllerTest {
     void test_getUserIds() {
 
         // Given
-        when(service.getUsersByEmails(anyString())).thenAnswer(invocation -> {
-            var emails = split(invocation.getArgument(0));
-            return users.stream().filter(user -> emails.contains(user.email())).toList();
-        });
+        when(service.getUsersByEmails(anyString())).thenAnswer(filter(users, User::email));
 
         // When
         var result = underTest.getUserIds("email1,email2");

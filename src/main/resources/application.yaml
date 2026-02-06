@@ -1,6 +1,6 @@
 spring:
   application:
-    name: service-UPDATE-TO-BE-NAME-OF-SERVICE
+    name: cp-audit-reports-service-v2
   datasource:
     url: ${APP_NAME_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
     username: ${APP_NAME_DATASOURCE_USERNAME:postgres}
@@ -72,15 +72,15 @@ service:
       type: 'application'
       sub-type: 'vnd.usersgroups.search-users+json'
   cases:
-    path: 'progression-query-api/query/api/rest/progression/materials/cases'
-    media:
-      type: 'application'
-      sub-type: 'vnd.progression.query.material-bulk+json'
-  mappings:
     path: 'system-id-mapper-api/rest/systemid/mappings/bulk'
     media:
       type: 'application'
       sub-type: 'vnd.systemid.mappings+json'
+  material:
+    path: 'progression-query-api/query/api/rest/progression/materials/cases'
+    media:
+      type: 'application'
+      sub-type: 'vnd.progression.query.material-bulk+json'
 
 logging:
   level:

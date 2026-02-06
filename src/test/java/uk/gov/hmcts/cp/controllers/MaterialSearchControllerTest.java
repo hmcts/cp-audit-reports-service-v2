@@ -7,18 +7,15 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.cp.entities.Material;
-import uk.gov.hmcts.cp.entities.User;
 import uk.gov.hmcts.cp.mappers.MaterialMapper;
-import uk.gov.hmcts.cp.mappers.UserMapper;
 import uk.gov.hmcts.cp.services.MaterialSearchService;
-import uk.gov.hmcts.cp.services.UserSearchService;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.cp.controllers.TestHelper.split;
+import static uk.gov.hmcts.cp.controllers.utility.SearchControllerTestHelper.filter;
 
 @ExtendWith(MockitoExtension.class)
 class MaterialSearchControllerTest {
@@ -38,17 +35,14 @@ class MaterialSearchControllerTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new MaterialSearchController(mapper, service);
+        underTest = new MaterialSearchController(service, mapper);
     }
 
     @Test
     void test_getCaseIdsForMaterialIds() {
 
         // Given
-        when(service.getMaterialCases(anyString())).thenAnswer(invocation -> {
-            var materialIds = split(invocation.getArgument(0));
-            return materials.stream().filter(aCase -> materialIds.contains(aCase.materialId())).toList();
-        });
+        when(service.getMaterialCases(anyString())).thenAnswer(filter(materials, Material::materialId));
 
         // When
         var result = underTest.getCaseIdsForMaterialIds("materialId1,materialId2");

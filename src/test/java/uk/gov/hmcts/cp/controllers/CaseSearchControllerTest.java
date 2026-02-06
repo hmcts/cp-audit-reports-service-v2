@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.cp.controllers.TestHelper.split;
+import static uk.gov.hmcts.cp.controllers.utility.SearchControllerTestHelper.filter;
 
 @ExtendWith(MockitoExtension.class)
 class CaseSearchControllerTest {
@@ -35,17 +35,14 @@ class CaseSearchControllerTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new CaseSearchController(mapper, service);
+        underTest = new CaseSearchController(service, mapper);
     }
 
     @Test
     void test_getCaseIds() {
 
         // Given
-        when(service.getCasesByUrns(anyString())).thenAnswer(invocation -> {
-                var caseUrns = split(invocation.getArgument(0));
-                return cases.stream().filter(aCase -> caseUrns.contains(aCase.sourceId())).toList();
-        });
+        when(service.getCasesByUrns(anyString())).thenAnswer(filter(cases, Case::sourceId));
 
         // When
         var result = underTest.getCaseIds("caseUrn1,caseUrn2");
@@ -71,10 +68,7 @@ class CaseSearchControllerTest {
     void test_getCaseUrns() {
 
         // Given
-        when(service.getCasesByIds(anyString())).thenAnswer(invocation -> {
-            var caseIds = split(invocation.getArgument(0));
-            return cases.stream().filter(aCase -> caseIds.contains(aCase.targetId())).toList();
-        });
+        when(service.getCasesByIds(anyString())).thenAnswer(filter(cases, Case::targetId));
 
         // When
         var result = underTest.getCaseUrns("caseId1,caseId2");
