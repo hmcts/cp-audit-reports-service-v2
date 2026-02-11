@@ -18,7 +18,7 @@ public class MaterialMapperTest {
         Material material = new Material("a", "b", "c", "d");
 
         // When
-        MaterialSearchResult result = materialMapper.mapMaterialToResult(material);
+        MaterialSearchResult result = materialMapper.convert(material);
 
         // Then
         assertThat(result.getCaseId()).isEqualTo(material.caseId());

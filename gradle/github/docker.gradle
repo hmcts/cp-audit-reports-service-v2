@@ -1,6 +1,6 @@
 dockerCompose {
   useComposeFiles = ['docker-compose.yml']
-  startedServices = ['app', 'db']
+  startedServices = ['app', 'wiremock']
 
   buildBeforeUp = true
   waitForTcpPorts = true

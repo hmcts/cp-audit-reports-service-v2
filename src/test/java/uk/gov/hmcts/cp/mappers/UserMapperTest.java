@@ -18,7 +18,7 @@ public class UserMapperTest {
         User user = new User("`123", "John", "Smith", "no@where.com");
 
         // When
-        UserSearchResult result = userMapper.mapUserToResult(user);
+        UserSearchResult result = userMapper.convert(user);
 
         // Then
         assertThat(result.getEmail()).isEqualTo(user.email());

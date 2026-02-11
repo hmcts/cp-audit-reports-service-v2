@@ -1,10 +1,11 @@
 package uk.gov.hmcts.cp.services;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.entities.User;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.utility.ClientHelper;
+import uk.gov.hmcts.cp.utility.ServiceHelper;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ public record UserSearchService(
 
     private List<User> getUsers(final String filter, final String value) {
 
-        return ClientHelper.getRecords(restClient, settings.users(), filter, value);
+        return ServiceHelper.getRecords(
+                restClient, settings.users(), filter, value,
+                new ParameterizedTypeReference<>() { }
+        );
     }
 }

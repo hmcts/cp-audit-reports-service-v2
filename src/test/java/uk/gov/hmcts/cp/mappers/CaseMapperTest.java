@@ -18,7 +18,7 @@ public class CaseMapperTest {
         Case aCase = new Case("targetId", "sourceId", "targetType");
 
         // When
-        CaseSearchResult result = caseMapper.mapCaseToResult(aCase);
+        CaseSearchResult result = caseMapper.convert(aCase);
 
         // Then
         assertThat(result.getCaseId()).isEqualTo(aCase.targetId());

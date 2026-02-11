@@ -1,10 +1,11 @@
 package uk.gov.hmcts.cp.services;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.entities.Material;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.utility.ClientHelper;
+import uk.gov.hmcts.cp.utility.ServiceHelper;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ public record MaterialSearchService(
 ) {
     public List<Material> getMaterialCases(final String materialIds) {
 
-        return ClientHelper.getRecords(restClient, settings.mappings(), "materialIds", materialIds);
+        return ServiceHelper.getRecords(
+                restClient, settings.material(), "materialIds", materialIds,
+                new ParameterizedTypeReference<>() { }
+        );
     }
 }

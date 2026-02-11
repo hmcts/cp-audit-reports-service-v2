@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/progression-query-api/query/api/rest/progression/materials/cases?materialIds=456"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/vnd.progression.query.material-bulk+json"
+    },
+    "jsonBody": [
+      {
+        "materialId": "456",
+        "courtDocumentId": "def",
+        "caseId": "123",
+        "caseUrn": "abc"
+      }
+    ]
+  }
+}

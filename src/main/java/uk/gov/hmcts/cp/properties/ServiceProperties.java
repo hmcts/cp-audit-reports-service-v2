@@ -9,5 +9,5 @@ public record ServiceProperties(
     String cjsCpUid,
     @NestedConfigurationProperty ClientProperties users,
     @NestedConfigurationProperty ClientProperties cases,
-    @NestedConfigurationProperty ClientProperties mappings
+    @NestedConfigurationProperty ClientProperties material
 ) { }
