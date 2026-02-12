@@ -4,14 +4,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class LiveTestBase<T> {
+public class ApiTestBase<T> {
 
     private final Class<T> responseType;
 
     protected final String baseUrl = System.getProperty("app.baseUrl", "http://localhost:8082");
     protected final RestTemplate http = new RestTemplate();
 
-    protected LiveTestBase(final Class<T> responseType) {
+    protected ApiTestBase(final Class<T> responseType) {
         this.responseType = responseType;
     }
 

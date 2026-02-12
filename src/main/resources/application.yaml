@@ -65,7 +65,7 @@ service:
     media:
       type: 'application'
       sub-type: 'vnd.systemid.mappings+json'
-  material:
+  materials:
     path: 'progression-query-api/query/api/rest/progression/materials/cases'
     media:
       type: 'application'

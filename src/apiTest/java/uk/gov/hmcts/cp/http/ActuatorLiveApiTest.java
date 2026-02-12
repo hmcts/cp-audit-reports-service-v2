@@ -8,13 +8,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import uk.gov.hmcts.cp.http.base.LiveTestBase;
+import uk.gov.hmcts.cp.http.base.ApiTestBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ActuatorHttpLiveTest extends LiveTestBase<String> {
+class ActuatorLiveApiTest extends ApiTestBase<String> {
 
-    public ActuatorHttpLiveTest() {
+    public ActuatorLiveApiTest() {
         super(String.class);
     }
 

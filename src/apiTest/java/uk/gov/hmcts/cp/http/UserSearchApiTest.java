@@ -4,15 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import uk.gov.hmcts.cp.http.base.LiveTestBase;
+import uk.gov.hmcts.cp.http.base.ApiTestBase;
 import uk.gov.hmcts.cp.openapi.model.GetUserIds200Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UserSearchLiveTest extends LiveTestBase<GetUserIds200Response> {
+class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
 
-    public UserSearchLiveTest() {
+    public UserSearchApiTest() {
         super(GetUserIds200Response.class);
     }
 

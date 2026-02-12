@@ -17,7 +17,7 @@ public record MaterialSearchService(
     public List<Material> getMaterialCases(final String materialIds) {
 
         return ServiceHelper.getRecords(
-                restClient, settings.material(), "materialIds", materialIds,
+                restClient, settings.materials(), "materialIds", materialIds,
                 new ParameterizedTypeReference<>() { }
         );
     }
