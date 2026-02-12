@@ -31,33 +31,14 @@ This project uses a two-file approach for environment variable management:
 ```bash
 # Simple key-value pairs (usually gitignored)
 SERVER_PORT=8082
-DATABASE_PASSWORD=secret123
 API_KEY=abc123xyz
 JWT_SECRET=my-secret-key
-
-# Database configuration
-APP_NAME_DATASOURCE_URL=jdbc:postgresql://localhost:55432/appdb
-APP_NAME_DATASOURCE_USERNAME=app
-APP_NAME_DATASOURCE_PASSWORD=app
-APP_NAME_DB_POOL_SIZE=20
-APP_NAME_DB_MIN_IDLE=5
 ```
 
 ### Example `.envrc` file:
 ```bash
 # Load .env file
 dotenv
-
-# Use .env values or provide defaults
-export SERVER_PORT=${SERVER_PORT:-8082}
-export DATABASE_PASSWORD=${DATABASE_PASSWORD:-default-password}
-
-# Database configuration
-export APP_NAME_DATASOURCE_URL=${APP_NAME_DATASOURCE_URL:-jdbc:postgresql://localhost:55432/appdb}
-export APP_NAME_DATASOURCE_USERNAME=${APP_NAME_DATASOURCE_USERNAME:-app}
-export APP_NAME_DATASOURCE_PASSWORD=${APP_NAME_DATASOURCE_PASSWORD:-app}
-export APP_NAME_DB_POOL_SIZE=${APP_NAME_DB_POOL_SIZE:-20}
-export APP_NAME_DB_MIN_IDLE=${APP_NAME_DB_MIN_IDLE:-5}
 
 # Add computed values
 export MANAGEMENT_SERVER_PORT=${MANAGEMENT_SERVER_PORT:-${SERVER_PORT}}
@@ -142,43 +123,6 @@ source ~/.bash_profile
    # See what .envrc does
    cat .envrc
    ```
-
-## Database Configuration
-
-The application connects to PostgreSQL by default. You can configure the database connection using the following environment variables:
-
-### Database Environment Variables
-
-| Variable | Default Value | Description |
-|----------|---------------|-------------|
-| `APP_NAME_DATASOURCE_URL` | `jdbc:postgresql://localhost:55432/appdb` | JDBC URL for database connection |
-| `APP_NAME_DATASOURCE_USERNAME` | `app` | Database username |
-| `APP_NAME_DATASOURCE_PASSWORD` | `app` | Database password |
-| `APP_NAME_DB_POOL_SIZE` | `20` | Maximum number of connections in the pool |
-| `APP_NAME_DB_MIN_IDLE` | `5` | Minimum number of idle connections |
-
-### Database Configuration Examples
-
-**Local Development (PostgreSQL on localhost):**
-```bash
-export APP_NAME_DATASOURCE_URL=jdbc:postgresql://localhost:55432/appdb
-export APP_NAME_DATASOURCE_USERNAME=app
-export APP_NAME_DATASOURCE_PASSWORD=app
-```
-
-**Docker Compose (PostgreSQL container):**
-```bash
-export APP_NAME_DATASOURCE_URL=jdbc:postgresql://db:5432/appdb
-export APP_NAME_DATASOURCE_USERNAME=app
-export APP_NAME_DATASOURCE_PASSWORD=app
-```
-
-**Production (External database):**
-```bash
-export APP_NAME_DATASOURCE_URL=jdbc:postgresql://prod-db.example.com:5432/appdb
-export APP_NAME_DATASOURCE_USERNAME=prod_user
-export APP_NAME_DATASOURCE_PASSWORD=secure_password
-```
 
 ## Server Port Configuration
 
@@ -279,31 +223,6 @@ rm .env
 echo "SERVER_PORT=8082" > .env
 ```
 
-**Issue: Database connection fails**
-```bash
-# Solution: Check database environment variables
-env | grep APP_NAME_DATASOURCE
-
-# Verify database is running
-docker ps | grep postgres
-
-# Test database connection
-psql -h localhost -p 55432 -U app -d appdb
-
-# Check application logs for connection errors
-./gradlew integration --info
-```
-
-**Issue: Wrong database hostname in Docker**
-```bash
-# Solution: Use correct hostname for Docker Compose
-# For local development:
-export APP_NAME_DATASOURCE_URL=jdbc:postgresql://localhost:55432/appdb
-
-# For Docker Compose:
-export APP_NAME_DATASOURCE_URL=jdbc:postgresql://db:5432/appdb
-```
-
 ## Best Practices
 
 ### Security
@@ -340,15 +259,6 @@ server:
 management:
   server:
     port: ${MANAGEMENT_SERVER_PORT:${SERVER_PORT:8082}}
-
-spring:
-  datasource:
-    url: ${APP_NAME_DATASOURCE_URL:jdbc:postgresql://localhost:55432/appdb}
-    username: ${APP_NAME_DATASOURCE_USERNAME:app}
-    password: ${APP_NAME_DATASOURCE_PASSWORD:app}
-    hikari:
-      maximum-pool-size: ${APP_NAME_DB_POOL_SIZE:20}
-      minimum-idle: ${APP_NAME_DB_MIN_IDLE:5}
 ```
 
 This ensures that the environment variables set by direnv are properly used by the Spring Boot application for both server configuration and database connectivity.

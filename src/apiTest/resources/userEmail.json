@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/usersgroups-query-api/query/api/rest/usersgroups/users?emails=no@where.com"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/vnd.usersgroups.search-users+json"
+    },
+    "jsonBody": [
+      {
+        "userId": "123",
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "no@where.com"
+      }
+    ]
+  }
+}

@@ -17,7 +17,6 @@ version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999'
 apply {
   from("$rootDir/gradle/dependencies/java-core.gradle")
   from("$rootDir/gradle/dependencies/spring-core.gradle")
-  from("$rootDir/gradle/dependencies/spring-db.gradle")
 
   from("$rootDir/gradle/tasks/apitest.gradle")
 
@@ -44,7 +43,6 @@ dependencies {
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
-  implementation 'org.hibernate.validator:hibernate-validator'
   implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
   implementation 'io.jsonwebtoken:jjwt:0.13.0'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

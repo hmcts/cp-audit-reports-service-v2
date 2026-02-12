@@ -16,6 +16,10 @@ jar {
   }
 }
 
+processApiTestResources {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 bootJar {
   archiveFileName = "${rootProject.name}-${project.version}.jar"
 
