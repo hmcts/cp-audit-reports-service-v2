@@ -1,6 +1,5 @@
 package uk.gov.hmcts.cp.utility;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClient;
@@ -14,21 +13,21 @@ public interface ServiceHelper {
 
     String HEADER_CORRELATION_ID = "CPCLIENTCORRELATIONID";
 
-    static <T> List<T> getRecords(
+    static <T> T getRecords(
             final RestClient restClient,
             final ClientProperties props,
             final String filter,
             final String value,
-            final ParameterizedTypeReference<List<T>> bodyType
+            final Class<T> bodyType
     ) {
         return getRecordsWithParams(restClient, props, Map.of(filter, value), bodyType);
     }
 
-    static <T> List<T> getRecordsWithParams(
+    static <T> T getRecordsWithParams(
             final RestClient restClient,
             final ClientProperties props,
             final Map<String, String> queryParams,
-            final ParameterizedTypeReference<List<T>> bodyType
+            final Class<T> bodyType
     ) {
         return getRecordsWithMultiParams(restClient, props, queryParams.entrySet().stream().
                 collect(Collectors.toMap(
@@ -37,11 +36,11 @@ public interface ServiceHelper {
                 )), bodyType);
     }
 
-    static <T> List<T> getRecordsWithMultiParams(
+    static <T> T getRecordsWithMultiParams(
             final RestClient restClient,
             final ClientProperties props,
             final Map<String, List<String>> queryParams,
-            final ParameterizedTypeReference<List<T>> bodyType
+            final Class<T> bodyType
     ) {
         return restClient.
                 get().uri(builder -> builder.

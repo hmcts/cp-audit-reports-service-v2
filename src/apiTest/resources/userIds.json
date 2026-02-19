@@ -8,19 +8,21 @@
     "headers": {
       "Content-Type": "application/vnd.usersgroups.search-users+json"
     },
-    "jsonBody": [
-      {
-        "userId": "234",
-        "firstName": "Billy",
-        "lastName": "Bob",
-        "email": "billy@bob.com"
-      },
-      {
-        "userId": "345",
-        "firstName": "Jack",
-        "lastName": "Jones",
-        "email": "jack@jones.com"
-      }
-    ]
+    "jsonBody": {
+      "users": [
+        {
+          "userId": "234",
+          "firstName": "Billy",
+          "lastName": "Bob",
+          "email": "billy@bob.com"
+        },
+        {
+          "userId": "345",
+          "firstName": "Jack",
+          "lastName": "Jones",
+          "email": "jack@jones.com"
+        }
+      ]
+    }
   }
 }

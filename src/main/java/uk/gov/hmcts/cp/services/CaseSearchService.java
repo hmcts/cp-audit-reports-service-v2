@@ -1,9 +1,9 @@
 package uk.gov.hmcts.cp.services;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.entities.Case;
+import uk.gov.hmcts.cp.entities.Cases;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
 import uk.gov.hmcts.cp.utility.ServiceHelper;
 
@@ -17,12 +17,12 @@ public record CaseSearchService(
 ) {
     public List<Case> getCasesByIds(final String caseIds) {
 
-        return getCases("targetId", caseIds);
+        return getCases("targetIds", caseIds);
     }
 
     public List<Case> getCasesByUrns(final String caseUrns) {
 
-        return getCases("sourceId", caseUrns);
+        return getCases("sourceIds", caseUrns);
     }
 
     private List<Case> getCases(final String filter, final String value) {
@@ -31,7 +31,7 @@ public record CaseSearchService(
                 restClient,
                 settings.cases(),
                 Map.of(filter, value, "targetType", "CASE_ID"),
-                new ParameterizedTypeReference<>() { }
-        );
+                Cases.class
+        ).systemIds();
     }
 }
