@@ -6,6 +6,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
 import uk.gov.hmcts.cp.entities.Case;
+import uk.gov.hmcts.cp.entities.Cases;
 import uk.gov.hmcts.cp.properties.ClientProperties;
 import uk.gov.hmcts.cp.properties.MediaProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
@@ -18,10 +19,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
 
-    List<Case> cases = List.of(
+    Cases cases = new Cases(List.of(
             new Case("caseId1", "caseUrn1", "type1"),
             new Case("caseId2", "caseUrn2", "type2")
-    );
+    ));
 
     @Override
     CaseSearchService createSearchService() {
@@ -34,29 +35,27 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
     void test_getCasesByIds() {
 
         // Given
-        when(responseSpec.body(ArgumentMatchers.<ParameterizedTypeReference<List<Case>>>any()))
-                .thenReturn(cases);
+        when(responseSpec.body(Cases.class)).thenReturn(cases);
 
         // When
         var result = underTest.getCasesByIds("caseId1,caseId2");
 
         // Then
-        assertEquals("path?targetId=caseId1,caseId2&targetType=CASE_ID", calledUri);
-        assertSame(cases, result);
+        assertEquals("path?targetIds=caseId1,caseId2&targetType=CASE_ID", calledUri);
+        assertSame(cases.systemIds(), result);
     }
 
     @Test
     void test_getCasesByUrns() {
 
         // Given
-        when(responseSpec.body(ArgumentMatchers.<ParameterizedTypeReference<List<Case>>>any()))
-                .thenReturn(cases);
+        when(responseSpec.body(Cases.class)).thenReturn(cases);
 
         // When
         var result = underTest.getCasesByUrns("caseUrn1,caseUrn2");
 
         // Then
-        assertEquals("path?sourceId=caseUrn1,caseUrn2&targetType=CASE_ID", calledUri);
-        assertSame(cases, result);
+        assertEquals("path?targetType=CASE_ID&sourceIds=caseUrn1,caseUrn2", calledUri);
+        assertSame(cases.systemIds(), result);
     }
 }

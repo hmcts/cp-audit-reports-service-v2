@@ -8,13 +8,15 @@
     "headers": {
       "Content-Type": "application/vnd.usersgroups.search-users+json"
     },
-    "jsonBody": [
-      {
-        "userId": "123",
-        "firstName": "John",
-        "lastName": "Smith",
-        "email": "no@where.com"
-      }
-    ]
+    "jsonBody": {
+      "users": [
+        {
+          "userId": "123",
+          "firstName": "John",
+          "lastName": "Smith",
+          "email": "no@where.com"
+        }
+      ]
+    }
   }
 }

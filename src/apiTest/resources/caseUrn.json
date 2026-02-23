@@ -1,19 +1,21 @@
 {
   "request": {
     "method": "GET",
-    "url": "/system-id-mapper-api/rest/systemid/mappings/bulk?sourceId=abc&targetType=CASE_ID"
+    "url": "/system-id-mapper-api/rest/systemid/mappings/bulk?targetType=CASE_ID&sourceIds=abc"
   },
   "response": {
     "status": 200,
     "headers": {
       "Content-Type": "application/vnd.systemid.mappings+json"
     },
-    "jsonBody": [
-      {
-        "targetId": "123",
-        "sourceId": "abc",
-        "targetType": "CASE_ID"
-      }
-    ]
+    "jsonBody": {
+      "systemIds": [
+        {
+          "targetId": "123",
+          "sourceId": "abc",
+          "targetType": "CASE_ID"
+        }
+      ]
+    }
   }
 }
