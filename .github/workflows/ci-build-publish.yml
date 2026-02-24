@@ -7,7 +7,7 @@ on:
         required: true
       AZURE_DEVOPS_ARTIFACT_TOKEN:
         required: true
-      HMCTS_ADO_PAT:
+      HMCTS_CP_ADO_PAT:
         required: true
     inputs:
       is_release:
@@ -166,13 +166,13 @@ jobs:
         uses: hmcts/trigger-ado-pipeline@v1
         with:
           pipeline_id: 460
-          ado_pat: ${{ secrets.HMCTS_ADO_PAT }}
+          ado_pat: ${{ secrets.HMCTS_CP_ADO_PAT }}
           template_parameters: >
             {
               "GROUP_ID": "uk.gov.hmcts.cp",
               "ARTIFACT_ID": "${{ env.REPO_NAME }}",
               "ARTIFACT_VERSION": "${{ needs.Artefact-Version.outputs.artefact_version }}",
-              "TARGET_REPOSITORY": "${{ github.repository }}"
+              "TARGET_REPOSITORY": "${{ github.repository }}",
               "agentDemand": "ubuntu-j25",
               "baseImage": "docker.io/library/eclipse-temurin:25-jre-alpine"
             }
