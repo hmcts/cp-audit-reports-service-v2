@@ -15,6 +15,6 @@ jobs:
     uses: ./.github/workflows/ci-build-publish.yml
     secrets: inherit
     with:
-      is_publish: ${{ github.event_name == 'push' }}
+      is_publish: true
       trigger_docker: true
       trigger_deploy: true
