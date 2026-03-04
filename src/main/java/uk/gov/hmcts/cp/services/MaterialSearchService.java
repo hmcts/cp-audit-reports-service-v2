@@ -2,10 +2,10 @@ package uk.gov.hmcts.cp.services;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import uk.gov.hmcts.cp.entities.Material;
 import uk.gov.hmcts.cp.entities.Materials;
+import uk.gov.hmcts.cp.entities.output.Material;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.utility.ServiceHelper;
+import uk.gov.hmcts.cp.utility.RecordUtils;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public record MaterialSearchService(
 ) {
     public List<Material> getMaterialCases(final String materialIds) {
 
-        return ServiceHelper.getRecords(
+        return RecordUtils.getRecords(
                 restClient, settings.materials(), "materialIds", materialIds, Materials.class
         ).materialIds();
     }

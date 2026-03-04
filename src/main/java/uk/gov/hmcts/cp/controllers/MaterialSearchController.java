@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.cp.controllers.base.SearchControllerBase;
-import uk.gov.hmcts.cp.entities.Material;
+import uk.gov.hmcts.cp.entities.output.Material;
 import uk.gov.hmcts.cp.mappers.MaterialMapper;
 import uk.gov.hmcts.cp.openapi.api.MaterialSearchApi;
 import uk.gov.hmcts.cp.openapi.model.GetCaseIdsForMaterialIds200Response;

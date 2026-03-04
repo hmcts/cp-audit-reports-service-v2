@@ -1,15 +1,55 @@
 services:
   wiremock:
     container_name: wiremock
+    hostname: wiremock
     image: wiremock/wiremock
+    volumes:
+      - ./src/apiTest/resources:/home/wiremock/mappings
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:8083/__admin/health || exit 1']
     environment:
       WIREMOCK_OPTIONS: "--port=8083"
-    volumes:
-      - ./src/apiTest/resources:/home/wiremock/mappings
     ports:
       - "8083:8083"
+
+  azurite:
+    container_name: azurite
+    hostname: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    healthcheck:
+      test: nc 127.0.0.1 10000 -z
+      interval: 1s
+      retries: 30
+    environment:
+      AZURITE_ACCOUNTS: "test:password"
+    ports:
+      - "10002:10002"
+
+  azurite_init:
+    container_name: azurite_init
+    image: mcr.microsoft.com/azure-cli
+    volumes:
+      - ./azurite:/opt
+    command: /opt/init.sh
+    depends_on:
+      azurite:
+        condition: service_healthy
+    environment:
+      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=test;AccountKey=password;TableEndpoint=http://azurite:10002/test;
+
+  azurite_data:
+    container_name: azurite_data
+    image: python
+    volumes:
+      - ./azurite:/opt
+    command: /opt/data.sh
+    depends_on:
+      azurite_init:
+        condition: service_completed_successfully
+    environment:
+      AZURE_ENDPOINT: http://azurite:10002/test
+      AZURE_CREDS_KEY: password
+      AZURE_CREDS_NAME: test
 
   app:
     container_name: app
@@ -18,7 +58,14 @@ services:
     depends_on:
       wiremock:
         condition: service_healthy
+      azurite_data:
+        condition: service_completed_successfully
     environment:
+      CP_TOKEN_TYPE: TEST
       CP_CAR_BASE_URL: http://wiremock:8083/
+      CP_TABLE_ENDPOINT: http://azurite:10002/test
+      CP_FABRIC_BASE_URL: http://wiremock:8083/
+      CP_AZURE_CREDS_KEY: password
+      CP_AZURE_CREDS_NAME: test
     ports:
       - "8082:8082"

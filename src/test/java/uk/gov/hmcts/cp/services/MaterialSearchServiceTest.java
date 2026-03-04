@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
-import uk.gov.hmcts.cp.entities.Material;
 import uk.gov.hmcts.cp.entities.Materials;
+import uk.gov.hmcts.cp.entities.output.Material;
 import uk.gov.hmcts.cp.properties.ClientProperties;
 import uk.gov.hmcts.cp.properties.MediaProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
 class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchService> {
@@ -27,8 +28,8 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
     @Override
     MaterialSearchService createSearchService() {
         return new MaterialSearchService(restClient, new ServiceProperties(
-                "", "", null, null, new ClientProperties("path", new MediaProperties(
-                "application", "json"))));
+                "", "", List.of("test"), TEST, null, null, null, new ClientProperties("path", new MediaProperties(
+                "application", "json")), null));
     }
 
     @Test

@@ -2,11 +2,9 @@ package uk.gov.hmcts.cp.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.ParameterizedTypeReference;
-import uk.gov.hmcts.cp.entities.User;
 import uk.gov.hmcts.cp.entities.Users;
+import uk.gov.hmcts.cp.entities.output.User;
 import uk.gov.hmcts.cp.properties.ClientProperties;
 import uk.gov.hmcts.cp.properties.MediaProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
@@ -15,6 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
 class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
@@ -27,8 +26,8 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
     @Override
     UserSearchService createSearchService() {
         return new UserSearchService(restClient, new ServiceProperties(
-                "", "", new ClientProperties("path", new MediaProperties(
-                "application", "json")), null, null));
+                "", "", List.of("test"), TEST, null, new ClientProperties("path", new MediaProperties(
+                "application", "json")), null, null, null));
     }
 
     @Test
