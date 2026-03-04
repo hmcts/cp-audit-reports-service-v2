@@ -2,10 +2,10 @@ package uk.gov.hmcts.cp.mappers;
 
 import org.mapstruct.Mapper;
 import org.springframework.core.convert.converter.Converter;
-import uk.gov.hmcts.cp.entities.output.User;
-import uk.gov.hmcts.cp.openapi.model.UserSearchResult;
+import uk.gov.hmcts.cp.entities.output.Report;
+import uk.gov.hmcts.cp.openapi.model.AuditReportListingItem;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 @Mapper(componentModel = SPRING)
-public interface UserMapper extends Converter<User, UserSearchResult> { }
+public interface ReportMapper extends Converter<Report, AuditReportListingItem> { }

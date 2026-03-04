@@ -1,4 +1,4 @@
-package uk.gov.hmcts.cp.entities;
+package uk.gov.hmcts.cp.entities.output;
 
 public record User(
         String userId,

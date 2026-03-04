@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.cp.controllers.base.SearchControllerBase;
-import uk.gov.hmcts.cp.entities.Case;
+import uk.gov.hmcts.cp.entities.output.Case;
 import uk.gov.hmcts.cp.mappers.CaseMapper;
 import uk.gov.hmcts.cp.openapi.api.CaseSearchApi;
 import uk.gov.hmcts.cp.openapi.model.CaseSearchResult;

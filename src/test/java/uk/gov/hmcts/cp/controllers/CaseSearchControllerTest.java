@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.cp.entities.Case;
+import uk.gov.hmcts.cp.entities.output.Case;
 import uk.gov.hmcts.cp.mappers.CaseMapper;
 import uk.gov.hmcts.cp.services.CaseSearchService;
 

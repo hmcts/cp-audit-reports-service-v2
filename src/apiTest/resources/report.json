@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/v1/workspaces/5323aeaf-c852-4a6b-9d37-5acd8cda6b87/items/9a13afd6-d911-4845-b7a6-747574908323/jobs/Pipeline/instances"
+  },
+  "response": {
+    "status": 202,
+    "headers": {
+      "location": "/v1/workspaces/5323aeaf-c852-4a6b-9d37-5acd8cda6b87/items/9a13afd6-d911-4845-b7a6-747574908323/jobs/instances/12345"
+    }
+  }
+}
