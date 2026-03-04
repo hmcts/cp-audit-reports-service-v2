@@ -1,7 +1,6 @@
 package uk.gov.hmcts.cp.http;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.cp.http.base.ApiTestBase;
@@ -9,6 +8,8 @@ import uk.gov.hmcts.cp.openapi.model.GetCaseIdsForMaterialIds200Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 class MaterialSearchApiTest extends ApiTestBase<GetCaseIdsForMaterialIds200Response> {
 
@@ -24,7 +25,7 @@ class MaterialSearchApiTest extends ApiTestBase<GetCaseIdsForMaterialIds200Respo
                 get("/material/id?materialIds=456");
 
         // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals(1, response.getBody().getResults().size());
         assertEquals("456", response.getBody().getResults().get(0).getMaterialId());
     }
@@ -37,7 +38,7 @@ class MaterialSearchApiTest extends ApiTestBase<GetCaseIdsForMaterialIds200Respo
                 get("/material/id?materialIds=567,678");
 
         // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals(2, response.getBody().getResults().size());
         assertEquals("567", response.getBody().getResults().get(0).getMaterialId());
         assertEquals("678", response.getBody().getResults().get(1).getMaterialId());
@@ -51,6 +52,6 @@ class MaterialSearchApiTest extends ApiTestBase<GetCaseIdsForMaterialIds200Respo
                 get("/material/id"));
 
         // Then
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals(BAD_REQUEST, exception.getStatusCode());
     }
 }

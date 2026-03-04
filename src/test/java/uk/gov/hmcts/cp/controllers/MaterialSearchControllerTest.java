@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.cp.entities.Material;
+import uk.gov.hmcts.cp.entities.output.Material;
 import uk.gov.hmcts.cp.mappers.MaterialMapper;
 import uk.gov.hmcts.cp.services.MaterialSearchService;
 
@@ -15,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.cp.controllers.utility.SearchControllerTestHelper.filter;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +50,8 @@ class MaterialSearchControllerTest {
 
         // Then
         assertNotNull(result);
+        assertEquals(OK, result.getStatusCode());
+
         assertNotNull(result.getBody());
         assertNotNull(result.getBody().getResults());
         assertEquals(2, result.getBody().getResults().size());

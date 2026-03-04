@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public record ServiceProperties(
     String baseUrl,
     String cjsCpUid,
+    @NestedConfigurationProperty AzureProperties azure,
     @NestedConfigurationProperty ClientProperties users,
     @NestedConfigurationProperty ClientProperties cases,
     @NestedConfigurationProperty ClientProperties materials

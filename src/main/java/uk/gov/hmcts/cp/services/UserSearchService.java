@@ -1,11 +1,12 @@
 package uk.gov.hmcts.cp.services;
 
+import io.opentelemetry.api.internal.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import uk.gov.hmcts.cp.entities.User;
-import uk.gov.hmcts.cp.entities.Users;
+import uk.gov.hmcts.cp.entities.output.User;
+import uk.gov.hmcts.cp.entities.output.Users;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.utility.ServiceHelper;
+import uk.gov.hmcts.cp.utility.RecordUtils;
 
 import java.util.List;
 
@@ -26,8 +27,10 @@ public record UserSearchService(
 
     private List<User> getUsers(final String filter, final String value) {
 
-        return ServiceHelper.getRecords(
-                restClient, settings.users(), filter, value, Users.class
-        ).users();
+        return StringUtils.isNullOrEmpty(value) ?
+                List.of() :
+                RecordUtils.getRecords(
+                        restClient, settings.users(), filter, value, Users.class
+                ).users();
     }
 }

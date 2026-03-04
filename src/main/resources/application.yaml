@@ -55,6 +55,17 @@ jwt:
 service:
   base-url: ${CP_CAR_BASE_URL:http://localhost:8083/}
   cjs-cp-uid: ${CP_CAR_CJSCPPUID_HEADER:CJSCPPUID}
+  azure:
+    token-type: ${CP_AZURE_TOKEN_TYPE:AZURE}
+    scopes:
+      - 'this'
+      - 'that'
+      - 'other'
+    fabric:
+      base-url: ${CP_AZURE_FABRIC_BASE_URL:https://api.fabric.microsoft.com/}
+      path: 'v1/workspaces/{WORKSPACE_ID}/items/{ITEM_ID}/jobs/Pipeline/instances'
+      workspace-id: ${CP_AZURE_FABRIC_WORKSPACE_ID}
+      item-id: ${CP_AZURE_FABRIC_ITEM_ID}
   users:
     path: 'usersgroups-query-api/query/api/rest/usersgroups/users'
     media:

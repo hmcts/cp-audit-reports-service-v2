@@ -36,6 +36,10 @@ public abstract class SearchServiceTestBase<SearchService> {
     void setUp() {
 
         underTest = createSearchService();
+        calledUri = "";
+   }
+
+    protected void setUpStubs() {
 
         when(restClient.get()).thenAnswer(i -> uriSpec);
 
@@ -50,7 +54,5 @@ public abstract class SearchServiceTestBase<SearchService> {
 
             return uriSpec;
         });
-
-        calledUri = "";
     }
 }
