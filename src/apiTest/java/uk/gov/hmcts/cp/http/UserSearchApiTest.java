@@ -1,7 +1,6 @@
 package uk.gov.hmcts.cp.http;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.cp.http.base.ApiTestBase;
@@ -9,6 +8,8 @@ import uk.gov.hmcts.cp.openapi.model.GetUserIds200Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
 
@@ -23,7 +24,7 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
         final ResponseEntity<GetUserIds200Response> response = get("/user/id?userIds=123");
 
         // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals(1, response.getBody().getResults().size());
         assertEquals("123", response.getBody().getResults().get(0).getUserId());
     }
@@ -35,7 +36,7 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
         final ResponseEntity<GetUserIds200Response> response = get("/user/id?userIds=234,345");
 
         // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals(2, response.getBody().getResults().size());
         assertEquals("234", response.getBody().getResults().get(0).getUserId());
         assertEquals("345", response.getBody().getResults().get(1).getUserId());
@@ -49,7 +50,7 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
                 get("/user/id"));
 
         // Then
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals(BAD_REQUEST, exception.getStatusCode());
     }
 
     @Test
@@ -59,7 +60,7 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
         final ResponseEntity<GetUserIds200Response> response = get("/user/email?emails=no@where.com");
 
         // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals(1, response.getBody().getResults().size());
         assertEquals("no@where.com", response.getBody().getResults().get(0).getEmail());
     }
@@ -71,7 +72,7 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
         final ResponseEntity<GetUserIds200Response> response = get("/user/email?emails=billy@bob.com,jack@jones.com");
 
         // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals(2, response.getBody().getResults().size());
         assertEquals("billy@bob.com", response.getBody().getResults().get(0).getEmail());
         assertEquals("jack@jones.com", response.getBody().getResults().get(1).getEmail());
@@ -85,6 +86,6 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
                 get("/user/email"));
 
         // Then
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals(BAD_REQUEST, exception.getStatusCode());
     }
 }

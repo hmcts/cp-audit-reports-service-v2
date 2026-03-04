@@ -1,4 +1,4 @@
-package uk.gov.hmcts.cp.entities;
+package uk.gov.hmcts.cp.entities.output;
 
 import java.util.List;
 

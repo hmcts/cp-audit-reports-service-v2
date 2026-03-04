@@ -3,7 +3,7 @@ package uk.gov.hmcts.cp.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.core.convert.converter.Converter;
-import uk.gov.hmcts.cp.entities.Case;
+import uk.gov.hmcts.cp.entities.output.Case;
 import uk.gov.hmcts.cp.openapi.model.CaseSearchResult;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;

@@ -2,11 +2,10 @@ package uk.gov.hmcts.cp.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.ParameterizedTypeReference;
-import uk.gov.hmcts.cp.entities.Material;
-import uk.gov.hmcts.cp.entities.Materials;
+import uk.gov.hmcts.cp.entities.output.Material;
+import uk.gov.hmcts.cp.entities.output.Materials;
+import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.ClientProperties;
 import uk.gov.hmcts.cp.properties.MediaProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
@@ -14,7 +13,10 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
 class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchService> {
@@ -27,12 +29,14 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
     @Override
     MaterialSearchService createSearchService() {
         return new MaterialSearchService(restClient, new ServiceProperties(
-                "", "", null, null, new ClientProperties("path", new MediaProperties(
-                "application", "json"))));
+                "", "", new AzureProperties(TEST, List.of("test"), null), null, null,
+                new ClientProperties("path", new MediaProperties("application", "json"))));
     }
 
     @Test
     void test_getMaterialCases() {
+
+        setUpStubs();
 
         // Given
         when(responseSpec.body(Materials.class)).thenReturn(materials);
@@ -43,5 +47,25 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
         // Then
         assertEquals("path?materialIds=materialId1,materialId2", calledUri);
         assertSame(materials.materialIds(), result);
+    }
+
+    @Test
+    void rest_client_not_called_for_null_getMaterialCases_list() {
+
+        // When
+        underTest.getMaterialCases(null);
+
+        // Then
+        verify(restClient, never()).get();
+    }
+
+    @Test
+    void rest_client_not_called_for_empty_getMaterialCases_list() {
+
+        // When
+        underTest.getMaterialCases("");
+
+        // Then
+        verify(restClient, never()).get();
     }
 }

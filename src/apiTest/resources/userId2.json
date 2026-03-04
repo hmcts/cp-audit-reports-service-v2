@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/usersgroups-query-api/query/api/rest/usersgroups/users?userIds=audit"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/vnd.usersgroups.search-users+json"
+    },
+    "jsonBody": {
+      "users":[
+        {
+          "userId": "audit",
+          "firstName": "Audit",
+          "lastName": "Audit",
+          "email": "audit@example.com"
+        }
+      ]
+    }
+  }
+}
