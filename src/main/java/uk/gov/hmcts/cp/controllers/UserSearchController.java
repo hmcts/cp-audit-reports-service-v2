@@ -24,6 +24,7 @@ public class UserSearchController
     }
 
     @Override
+    @AccessControl
     public ResponseEntity<GetUserIds200Response> getUserEmails(@NotNull @Valid final String userIds) {
 
         log.info("getUserEmails");
