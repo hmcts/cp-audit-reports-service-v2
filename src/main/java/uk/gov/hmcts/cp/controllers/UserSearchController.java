@@ -13,6 +13,9 @@ import uk.gov.hmcts.cp.openapi.model.GetUserIds200Response;
 import uk.gov.hmcts.cp.openapi.model.UserSearchResult;
 import uk.gov.hmcts.cp.services.UserSearchService;
 
+import static uk.gov.hmcts.cp.controllers.UserType.GROUP_USER;
+import static uk.gov.hmcts.cp.controllers.UserType.SYSTEM_USER;
+
 @Slf4j
 @RestController
 public class UserSearchController
@@ -24,7 +27,7 @@ public class UserSearchController
     }
 
     @Override
-    @AccessControl
+    @AccessControl({SYSTEM_USER, GROUP_USER})
     public ResponseEntity<GetUserIds200Response> getUserEmails(@NotNull @Valid final String userIds) {
 
         log.info("getUserEmails");
@@ -32,6 +35,7 @@ public class UserSearchController
     }
 
     @Override
+    @AccessControl({SYSTEM_USER, GROUP_USER})
     public ResponseEntity<GetUserIds200Response> getUserIds(@NotNull @Valid final String emails) {
 
         log.info("getUserIds");

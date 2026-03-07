@@ -13,6 +13,9 @@ import uk.gov.hmcts.cp.openapi.model.CaseSearchResult;
 import uk.gov.hmcts.cp.openapi.model.GetCaseUrns200Response;
 import uk.gov.hmcts.cp.services.CaseSearchService;
 
+import static uk.gov.hmcts.cp.controllers.UserType.GROUP_USER;
+import static uk.gov.hmcts.cp.controllers.UserType.SYSTEM_USER;
+
 @Slf4j
 @RestController
 public class CaseSearchController
@@ -24,6 +27,7 @@ public class CaseSearchController
     }
 
     @Override
+    @AccessControl({SYSTEM_USER, GROUP_USER})
     public ResponseEntity<GetCaseUrns200Response> getCaseIds(@NotNull @Valid final String caseUrns) {
 
         log.info("getCaseIds");
@@ -31,6 +35,7 @@ public class CaseSearchController
     }
 
     @Override
+    @AccessControl({SYSTEM_USER, GROUP_USER})
     public ResponseEntity<GetCaseUrns200Response> getCaseUrns(@NotNull @Valid final String caseIds) {
 
         log.info("getCaseUrns");

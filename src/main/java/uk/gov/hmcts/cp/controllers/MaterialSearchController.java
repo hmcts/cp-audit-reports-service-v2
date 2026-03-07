@@ -13,6 +13,9 @@ import uk.gov.hmcts.cp.openapi.model.GetCaseIdsForMaterialIds200Response;
 import uk.gov.hmcts.cp.openapi.model.MaterialSearchResult;
 import uk.gov.hmcts.cp.services.MaterialSearchService;
 
+import static uk.gov.hmcts.cp.controllers.UserType.GROUP_USER;
+import static uk.gov.hmcts.cp.controllers.UserType.SYSTEM_USER;
+
 @Slf4j
 @RestController
 public class MaterialSearchController
@@ -24,6 +27,7 @@ public class MaterialSearchController
     }
 
     @Override
+    @AccessControl({SYSTEM_USER, GROUP_USER})
     public ResponseEntity<GetCaseIdsForMaterialIds200Response> getCaseIdsForMaterialIds(@NotNull @Valid final String materialIds) {
 
         log.info("getCaseIdsForMaterialIds");
