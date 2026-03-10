@@ -1,8 +1,15 @@
 package uk.gov.hmcts.cp.http.base;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ApiTestBase<T> {
 
@@ -17,6 +24,19 @@ public class ApiTestBase<T> {
 
     protected ResponseEntity<T> get(final String url) {
 
-        return http.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+        return get(url, httpHeaders(Map.of("CJSCPPUID", "alice")));
+    }
+    protected ResponseEntity<T> get(final String url, final HttpHeaders headers) {
+
+        return http.exchange(baseUrl + url, HttpMethod.GET, new HttpEntity<>(headers), responseType);
+    }
+
+    protected static HttpHeaders httpHeaders(final Map<String, String> headers) {
+
+        return HttpHeaders.copyOf(CollectionUtils.toMultiValueMap(
+                headers.entrySet().stream().collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> List.of(entry.getValue())
+                ))
+        ));
     }
 }
