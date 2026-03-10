@@ -54,7 +54,7 @@ jwt:
 
 service:
   base-url: ${CP_CAR_BASE_URL:http://localhost:8083/}
-  cjs-cp-uid: ${CP_CAR_CJSCPPUID_HEADER:CJSCPPUID}
+  cjs-cp-uid: ${AUDITREPORTS_SYSTEM_USER_ID}
   azure:
     token-type: ${CP_AZURE_TOKEN_TYPE:AZURE}
     scopes:
