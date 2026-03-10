@@ -12,7 +12,7 @@ class ActuatorIntegrationTest extends IntegrationTestBase {
     @Test
     void actuator_info_should_have_build_fields() throws Exception {
         String name = "cp-audit-reports-service-v2";
-        mockMvc.perform(get("/actuator/info"))
+        mockMvc.perform(get("/actuator/info").header("CJSCPPUID", "alice"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.build.artifact").value(name))
@@ -23,7 +23,7 @@ class ActuatorIntegrationTest extends IntegrationTestBase {
 
     @Test
     void actuator_info_should_have_gorylenko_git_fields() throws Exception {
-        mockMvc.perform(get("/actuator/info"))
+        mockMvc.perform(get("/actuator/info").header("CJSCPPUID", "alice"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.git.branch").exists())
@@ -33,7 +33,7 @@ class ActuatorIntegrationTest extends IntegrationTestBase {
 
     @Test
     void actuator_health_should_have_correct_fields() throws Exception {
-        mockMvc.perform(get("/actuator/health"))
+        mockMvc.perform(get("/actuator/health").header("CJSCPPUID", "alice"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("UP"))
