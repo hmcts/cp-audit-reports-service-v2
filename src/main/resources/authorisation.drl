@@ -1,0 +1,68 @@
+import uk.gov.moj.cpp.authz.drools.Outcome;
+import uk.gov.moj.cpp.authz.drools.AuthAction;
+
+global uk.gov.moj.cpp.authz.drools.providers.UserAndGroupProvider userAndGroupProvider;
+
+rule "Allow GET /user/id for System and Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "GET /user/id")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System", "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /user/email for System and Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "GET /user/email")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System", "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /case/id for System and Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "GET /case/id")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System", "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /case/urn for System and Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "GET /case/urn")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System", "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /material/id for System and Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "GET /material/id")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System", "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /reports for Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "POST /reports")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow POST /reports for Allowed Group"
+when
+  $o: Outcome()
+  $a: AuthAction(name == "POST /reports")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Allowed Group"))
+then
+  $o.setSuccess(true);
+end
+

@@ -39,7 +39,8 @@ springBoot {
 }
 
 dependencies {
-  implementation("uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-70abc99")
+  implementation "uk.gov.hmcts.cp:cp-auth-rules-filter:1.0.3"
+  implementation "uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-70abc99"
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
