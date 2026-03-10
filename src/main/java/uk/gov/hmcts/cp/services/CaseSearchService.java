@@ -1,11 +1,12 @@
 package uk.gov.hmcts.cp.services;
 
+import io.opentelemetry.api.internal.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import uk.gov.hmcts.cp.entities.Case;
-import uk.gov.hmcts.cp.entities.Cases;
+import uk.gov.hmcts.cp.entities.output.Case;
+import uk.gov.hmcts.cp.entities.output.Cases;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.utility.ServiceHelper;
+import uk.gov.hmcts.cp.utility.RecordUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -27,11 +28,13 @@ public record CaseSearchService(
 
     private List<Case> getCases(final String filter, final String value) {
 
-        return ServiceHelper.getRecordsWithParams(
-                restClient,
-                settings.cases(),
-                Map.of(filter, value, "targetType", "CASE_ID"),
-                Cases.class
-        ).systemIds();
+        return StringUtils.isNullOrEmpty(value) ?
+                List.of() :
+                RecordUtils.getRecordsWithParams(
+                        restClient,
+                        settings.cases(),
+                        Map.of(filter, value, "targetType", "CASE_ID"),
+                        Cases.class
+                ).systemIds();
     }
 }

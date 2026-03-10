@@ -23,7 +23,6 @@ public class SearchControllerBase<V, S, T, R> {
     }
 
     protected ResponseEntity<R> responseOk(final List<S> list) {
-
         return ResponseEntity.ok(toResponse.apply(list.stream().map(converter::convert).toList()));
     }
 }

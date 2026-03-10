@@ -2,7 +2,7 @@ package uk.gov.hmcts.cp.mappers;
 
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import uk.gov.hmcts.cp.entities.Case;
+import uk.gov.hmcts.cp.entities.output.Case;
 import uk.gov.hmcts.cp.openapi.model.CaseSearchResult;
 
 import static org.assertj.core.api.Assertions.assertThat;

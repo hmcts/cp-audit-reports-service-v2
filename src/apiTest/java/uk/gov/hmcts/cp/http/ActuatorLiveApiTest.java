@@ -3,14 +3,16 @@ package uk.gov.hmcts.cp.http;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.cp.http.base.ApiTestBase;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 class ActuatorLiveApiTest extends ApiTestBase<String> {
 
@@ -25,21 +27,23 @@ class ActuatorLiveApiTest extends ApiTestBase<String> {
         final ResponseEntity<String> res = get("/actuator/health");
 
         // Then
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(res.getStatusCode()).isEqualTo(OK);
         assertThat(res.getBody()).contains("\"status\":\"UP\"");
     }
 
-    @Disabled // Lets revisit this during our monitoring spike
+    @Disabled // Let's revisit this during our monitoring spike
     @Test
     void prometheus_is_exposed() {
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAccept(java.util.List.of(MediaType.TEXT_PLAIN));
+
+        // When
         final ResponseEntity<String> res = http.exchange(
                 baseUrl + "/actuator/prometheus", HttpMethod.GET,
-                new HttpEntity<>(httpHeaders),
+                new HttpEntity<>(httpHeaders(Map.of(ACCEPT, TEXT_PLAIN_VALUE))),
                 String.class
         );
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // Then
+        assertThat(res.getStatusCode()).isEqualTo(OK);
         assertThat(res.getBody()).contains("application_started_time_seconds");
     }
 }

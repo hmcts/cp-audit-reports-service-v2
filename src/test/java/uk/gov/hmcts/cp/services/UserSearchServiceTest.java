@@ -2,11 +2,10 @@ package uk.gov.hmcts.cp.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.ParameterizedTypeReference;
-import uk.gov.hmcts.cp.entities.User;
-import uk.gov.hmcts.cp.entities.Users;
+import uk.gov.hmcts.cp.entities.output.User;
+import uk.gov.hmcts.cp.entities.output.Users;
+import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.ClientProperties;
 import uk.gov.hmcts.cp.properties.MediaProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
@@ -14,7 +13,10 @@ import uk.gov.hmcts.cp.properties.ServiceProperties;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
 class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
@@ -27,12 +29,14 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
     @Override
     UserSearchService createSearchService() {
         return new UserSearchService(restClient, new ServiceProperties(
-                "", "", new ClientProperties("path", new MediaProperties(
-                "application", "json")), null, null));
+                "", "", new AzureProperties(TEST, List.of("test"), null),
+                new ClientProperties("path", new MediaProperties("application", "json")), null, null));
     }
 
     @Test
     void test_getUsersByIds() {
+
+        setUpStubs();
 
         // Given
         when(responseSpec.body(Users.class)).thenReturn(users);
@@ -48,6 +52,8 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
     @Test
     void test_getUsersByEmails() {
 
+        setUpStubs();
+
         // Given
         when(responseSpec.body(Users.class)).thenReturn(users);
 
@@ -57,5 +63,45 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
         // Then
         assertEquals("path?emails=email1,email2", calledUri);
         assertSame(users.users(), result);
+    }
+
+    @Test
+    void rest_client_not_called_for_null_getUsersByIds_list() {
+
+        // When
+        underTest.getUsersByIds(null);
+
+        // Then
+        verify(restClient, never()).get();
+    }
+
+    @Test
+    void rest_client_not_called_for_empty_getUsersByIds_list() {
+
+        // When
+        underTest.getUsersByIds("");
+
+        // Then
+        verify(restClient, never()).get();
+    }
+
+    @Test
+    void rest_client_not_called_for_null_getUsersByEmails_list() {
+
+        // When
+        underTest.getUsersByEmails(null);
+
+        // Then
+        verify(restClient, never()).get();
+    }
+
+    @Test
+    void rest_client_not_called_for_empty_getUsersByEmails_list() {
+
+        // When
+        underTest.getUsersByEmails("");
+
+        // Then
+        verify(restClient, never()).get();
     }
 }
