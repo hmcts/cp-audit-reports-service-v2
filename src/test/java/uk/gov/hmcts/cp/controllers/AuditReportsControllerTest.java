@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.cp.services.AuditReportsService;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.cp.entities.output.Case;
 import uk.gov.hmcts.cp.entities.output.User;
 import uk.gov.hmcts.cp.mappers.TestableAuditReportsController;
 import uk.gov.hmcts.cp.openapi.model.AuditReportRequest;
 import uk.gov.hmcts.cp.openapi.model.PostReportRequest202Response;
-import uk.gov.hmcts.cp.services.AuditReportsService;
 import uk.gov.hmcts.cp.services.CaseSearchService;
 import uk.gov.hmcts.cp.services.UserSearchService;
 
@@ -27,6 +27,9 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.cp.entities.output.ReportResult.toResult;
 import static uk.gov.hmcts.cp.utility.AuditReportRequestUtils.*;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static uk.gov.hmcts.cp.utility.ReportUtils.createReport;
 
 @ExtendWith(MockitoExtension.class)
 public class AuditReportsControllerTest {
@@ -52,6 +55,27 @@ public class AuditReportsControllerTest {
                 reportsService, caseService, userService,
                 name -> Optional.ofNullable(headers.get(name))
         );
+    }
+
+    @Test
+    void test_getReportListing() {
+
+        final var report = createReport();
+
+        // Given
+        when(reportsService.getReports()).thenReturn(List.of(report));
+
+        // When
+        var result = underTest.getReportListing();
+
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getBody());
+        assertNotNull(result.getBody().getReports());
+        assertEquals(1, result.getBody().getReports().size());
+
+        assertNotNull(result.getBody().getReports().getFirst());
+        assertEquals(report.pipelineJobId(), result.getBody().getReports().getFirst().getPipelineJobId().toString());
     }
 
     @Test

@@ -2,16 +2,22 @@ package uk.gov.hmcts.cp.services;
 
 import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenRequestContext;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.models.TableEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.cp.entities.input.ReportRequest;
+import uk.gov.hmcts.cp.entities.output.Report;
 import uk.gov.hmcts.cp.entities.output.ReportResult;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.utility.StreamUtils;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -27,10 +33,21 @@ import static uk.gov.hmcts.cp.utility.StreamUtils.split;
 @Component
 public record AuditReportsService(
         RestClient restClient,
+        @Qualifier("reportrequests") TableClient reportRequests,
+        ObjectMapper objectMapper,
         FabricProperties fabric,
         TokenRequestContext context,
         Function<TokenRequestContext, AccessToken> azureAccess
 ) {
+    public List<Report> getReports() {
+
+        return reportRequests.
+                listEntities().
+                mapPage(TableEntity::getProperties).
+                mapPage(Report.fromMap(objectMapper)).
+                stream().
+                toList();
+    }
 
     @SuppressWarnings("PMD")
     public Optional<ReportResult> requestReport(final ReportRequest reportRequest) {
@@ -54,11 +71,11 @@ public record AuditReportsService(
                     map(URI::getPath).
                     map(split("/")).
                     flatMap(StreamUtils::last).
-                    map(toResult(reportRequest.auditReportReference()));
+                    map(toResult(reportRequest.auditReference()));
 
         } catch (RuntimeException ex) {
 
-            log.warn("RequestReport reference {} failed, status code {}", reportRequest.auditReportReference(), ex.getMessage());
+            log.warn("RequestReport reference {} failed, status code {}", reportRequest.auditReference(), ex.getMessage());
             return Optional.empty();
         }
     }

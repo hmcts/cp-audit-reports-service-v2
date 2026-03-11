@@ -1,15 +1,21 @@
 package uk.gov.hmcts.cp.config;
 
 import com.azure.core.credential.AccessToken;
+import com.azure.core.credential.AzureNamedKeyCredential;
 import com.azure.core.credential.TokenRequestContext;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
+import uk.gov.hmcts.cp.properties.TableProperties;
 
 import java.util.function.Function;
 
@@ -35,12 +41,40 @@ public class ClientConfig {
     }
 
     @Bean
+    public TableServiceClient tableServiceClient(
+            final TableProperties settings,
+            final AzureNamedKeyCredential credential
+    ) {
+        return new TableServiceClientBuilder().
+                endpoint(settings.endpoint()).
+//              sasToken(settings.sasToken()).
+                credential(credential).
+                buildClient();
+    }
+
+    @Bean
+    public TableProperties tableProperties(final ServiceProperties settings) {
+        return settings.table();
+    }
+
+    @Bean
+    public AzureNamedKeyCredential azureCredential(final TableProperties settings) {
+        return new AzureNamedKeyCredential(settings.azureName(), settings.azureKey());
+    }
+
+    @Bean
+    @Qualifier("reportrequests")
+    public TableClient reportRequests(final TableServiceClient tableServiceClient) {
+        return tableServiceClient.getTableClient("reportrequests");
+    }
+
+    @Bean
     public TokenRequestContext tokenRequest(final AzureProperties settings) {
         return new TokenRequestContext().setScopes(settings.scopes());
     }
 
     @Bean
-    public AzureProperties audienceProperties(final ServiceProperties settings) {
+    public AzureProperties azureProperties(final ServiceProperties settings) {
         return settings.azure();
     }
 

@@ -7,14 +7,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import uk.gov.hmcts.cp.controllers.base.SearchControllerBase;
 import uk.gov.hmcts.cp.entities.input.ReportRequest;
+import uk.gov.hmcts.cp.entities.output.Report;
+import uk.gov.hmcts.cp.mappers.ReportMapper;
 import uk.gov.hmcts.cp.mappers.RequestMapper;
 import uk.gov.hmcts.cp.mappers.ResultMapper;
 import uk.gov.hmcts.cp.openapi.api.AuditReportsApi;
+import uk.gov.hmcts.cp.openapi.model.AuditReportListingItem;
 import uk.gov.hmcts.cp.openapi.model.AuditReportRequest;
+import uk.gov.hmcts.cp.openapi.model.GetReportListing200Response;
 import uk.gov.hmcts.cp.openapi.model.PostReportRequest202Response;
 import uk.gov.hmcts.cp.services.AuditReportsService;
-import uk.gov.hmcts.cp.services.UserSearchService;
 import uk.gov.hmcts.cp.utility.ResponseUtils;
 
 import java.util.Optional;
@@ -22,23 +26,30 @@ import java.util.function.Function;
 
 @Slf4j
 @RestController
-public class AuditReportsController implements AuditReportsApi {
+public class AuditReportsController
+        extends SearchControllerBase<AuditReportsService, Report, AuditReportListingItem, GetReportListing200Response>
+        implements AuditReportsApi {
 
     private final ResultMapper resultMapper;
     private final RequestMapper requestMapper;
-    private final AuditReportsService reportService;
-    private final UserSearchService userService;
 
     public AuditReportsController(
             final AuditReportsService reportService,
-            final UserSearchService userService,
             final RequestMapper requestMapper,
-            final ResultMapper resultMapper
+            final ResultMapper resultMapper,
+            final ReportMapper reportMapper
     ) {
+        super(reportService, reportMapper, GetReportListing200Response::new);
+
         this.requestMapper = requestMapper;
         this.resultMapper = resultMapper;
-        this.reportService = reportService;
-        this.userService = userService;
+    }
+
+    @Override
+    public ResponseEntity<GetReportListing200Response> getReportListing() {
+
+        log.info("getReportListing");
+        return responseOk(service.getReports());
     }
 
     @Override
@@ -49,7 +60,7 @@ public class AuditReportsController implements AuditReportsApi {
 
         return getHeader("CJSCPPUID").
                 flatMap(cjsCppUid -> convertRequest(auditReportRequest, cjsCppUid)).
-                map(reportRequest -> reportService.
+                map(reportRequest -> service.
                         requestReport(reportRequest).
                         map(resultMapper::convert).
                         map(ResponseEntity::ok).

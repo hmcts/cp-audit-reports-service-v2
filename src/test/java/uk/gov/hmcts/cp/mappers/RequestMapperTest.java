@@ -52,15 +52,18 @@ public class RequestMapperTest {
         // Then
         assertThat(result.auditUserId()).isEqualTo(audit.userId());
         assertThat(result.auditUserEmail()).isEqualTo(audit.email());
-        assertThat(result.auditReportReference().length()).isEqualTo(15);
+        assertThat(result.auditReference().length()).isEqualTo(15);
+
         assertThat(result.startDate()).isEqualTo(request.getStartDate().toString());
         assertThat(result.endDate()).isEqualTo(request.getEndDate().toString());
         assertThat(result.allUsers()).isEqualTo(request.getAllUsers());
         assertThat(result.userEmail()).isEqualTo(request.getUserEmail());
+
         assertThat(result.userId()).isEqualTo(user.userId());
         assertThat(result.searchCriteria()).isEqualTo("ALL_ACTIVITY");
         assertThat(result.caseUrn()).isEqualTo(request.getCaseUrn());
         assertThat(result.caseId()).isEqualTo(aCase.targetId());
+
         assertThat(result.materialIds()).isEqualTo(request.getMaterialIds());
         assertThat(result.hearingId()).isEqualTo(request.getHearingId());
     }

@@ -16,12 +16,10 @@ public record UserSearchService(
         ServiceProperties settings
 ) {
     public List<User> getUsersByIds(final String userIds) {
-
         return getUsers("userIds", userIds);
     }
 
     public List<User> getUsersByEmails(final String emails) {
-
         return getUsers("emails", emails);
     }
 

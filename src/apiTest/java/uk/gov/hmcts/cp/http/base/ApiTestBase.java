@@ -27,9 +27,14 @@ public class ApiTestBase<T> {
         return http.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
     }
 
+    protected <R, U> ResponseEntity<U> post(final String url, final R request, final HttpHeaders headers, final Class<U> postResponseType) {
+
+        return http.exchange(baseUrl + url, HttpMethod.POST, new HttpEntity<>(request, headers), postResponseType);
+    }
+
     protected <R> ResponseEntity<T> post(final String url, final R request, final HttpHeaders headers) {
 
-        return http.exchange(baseUrl + url, HttpMethod.POST, new HttpEntity<>(request, headers), responseType);
+        return post(url, request, headers, responseType);
     }
 
     protected static HttpHeaders httpHeaders(final Map<String, String> headers) {
