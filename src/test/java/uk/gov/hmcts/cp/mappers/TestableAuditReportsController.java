@@ -21,13 +21,14 @@ public class TestableAuditReportsController extends AuditReportsController {
     ) {
         final var resultMapper = Mappers.getMapper(ResultMapper.class);
         final var requestMapper = Mappers.getMapper(RequestMapper.class);
+        final var reportMapper = Mappers.getMapper(ReportMapper.class);
 
         requestMapper.caseService = caseService;    // TestableAuditReportsController must be in this package
         requestMapper.userService = userService;    // uk.gov.hmcts.cp.mappers to access the mapper fields
 
         this.headers = headers;
 
-        super(reportService, userService, requestMapper, resultMapper);
+        super(reportService, requestMapper, resultMapper, reportMapper);
     }
 
     @Override

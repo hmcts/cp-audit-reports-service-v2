@@ -1,6 +1,10 @@
 spring:
   application:
     name: cp-audit-reports-service-v2
+  jackson:
+    deserialization:
+      fail-on-null-for-primitives: false
+      fail-on-unknown-properties: false
 
 server:
   port: ${SERVER_PORT:8082}
@@ -35,12 +39,15 @@ management:
     sampling:
       probability: ${TRACING_SAMPLER_PROBABILITY:1.0}
   otlp:
-    tracing:
-      endpoint: ${OTEL_TRACES_URL:http://localhost:4318/traces}
     metrics:
       export:
         enabled: ${OTEL_METRICS_ENABLED:false}
         url: ${OTEL_METRICS_URL:http://localhost:4318/metrics}
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_TRACES_URL:http://localhost:4318/traces}
 
 azure:
   application-insights:
@@ -64,6 +71,11 @@ service:
       path: 'v1/workspaces/{WORKSPACE_ID}/items/{ITEM_ID}/jobs/Pipeline/instances'
       workspace-id: ${CP_AZURE_FABRIC_WORKSPACE_ID}
       item-id: ${CP_AZURE_FABRIC_ITEM_ID}
+  table:
+    endpoint: ${CP_TABLE_ENDPOINT:https://saauditreportstorage.table.core.windows.net}
+    sas-token: ${CP_TABLE_SAS_TOKEN:default}
+    azure-key: ${CP_AZURE_CREDS_KEY:default}
+    azure-name: ${CP_AZURE_CREDS_NAME:default}
   users:
     path: 'usersgroups-query-api/query/api/rest/usersgroups/users'
     media:
@@ -79,6 +91,10 @@ service:
     media:
       type: 'application'
       sub-type: 'vnd.progression.query.material-bulk+json'
+  scopes:
+    - 'this'
+    - 'that'
+    - 'other'
 
 logging:
   level:

@@ -7,7 +7,7 @@
         "executionData": {
           "auditUserId" : "audit",
           "auditUserEmail" : "audit@example.com",
-          "auditReportReference" : "${json-unit.any-string}",
+          "auditReference" : "${json-unit.any-string}",
           "startDate" : "${json-unit.any-string}",
           "endDate" : "${json-unit.any-string}",
           "allUsers": false,
