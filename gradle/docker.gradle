@@ -1,5 +1,7 @@
+tasks.named('composeBuild') { dependsOn tasks.named('bootJar') }
+
 dockerCompose {
-  useComposeFiles = ['docker-compose.yml']
+  useComposeFiles = ['docker/docker-compose.integration.yml']
   startedServices = ['app', 'wiremock']
 
   buildBeforeUp = true

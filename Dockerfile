@@ -2,19 +2,36 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE:-docker.io/library/eclipse-temurin:25-jre-alpine}
 
+# ---- Build arguments ----
+ARG JAR_FILENAME
+ARG CERTS_DIR
+
+ENV JAR_FILENAME=${JAR_FILENAME:-app.jar}
+ENV JAR_FULL_PATH=build/libs/$JAR_FILENAME
+
 # run as non-root ... group and user "app"
 RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
 
-# ---- Application files ----
-COPY docker/* /app/
-COPY build/libs/*.jar /app/
-COPY lib/applicationinsights.json /app/
+#---Certs---
+COPY ${CERTS_DIR}/cpp-nonlive-ca.pem /usr/local/share/ca-certificates/cpp-nonlive-ca.crt
+COPY ${CERTS_DIR}/cp-cjs-hmcts-net-ca.pem /usr/local/share/ca-certificates/cp-cjs-hmcts-net-ca.crt
+COPY ${CERTS_DIR}/cjscp-nl-root.pem /usr/local/share/ca-certificates/cjscp-nl-root.crt
+COPY ${CERTS_DIR}/cjscp-lv-root.pem /usr/local/share/ca-certificates/cjscp-lv-root.crt
 
-# Not sure this does anything useful we can drop once we sort certificates
-RUN test -n "$JAVA_HOME" \
- && test -f "$JAVA_HOME/lib/security/cacerts" \
- && chmod 777 "$JAVA_HOME/lib/security/cacerts"
+RUN update-ca-certificates
+
+RUN keytool -importcert -trustcacerts -cacerts -file /usr/local/share/ca-certificates/cpp-nonlive-ca.crt -alias cpp-nonlive -storepass changeit -noprompt
+RUN keytool -importcert -trustcacerts -cacerts -file /usr/local/share/ca-certificates/cp-cjs-hmcts-net-ca.crt -alias cpp-live -storepass changeit -noprompt
+RUN keytool -importcert -trustcacerts -cacerts -file /usr/local/share/ca-certificates/cjscp-nl-root.crt -alias cjscp-nonlive -storepass changeit -noprompt
+RUN keytool -importcert -trustcacerts -cacerts -file /usr/local/share/ca-certificates/cjscp-lv-root.crt -alias cjscp-live -storepass changeit -noprompt
+
+# ---- Application files ----
+COPY $JAR_FULL_PATH /opt/app/app.jar
+COPY lib/applicationinsights.json /opt/app/
+
+# ---- Permissions ----
+RUN chmod 755 /opt/app/app.jar
 
 USER app
-ENTRYPOINT ["/bin/sh","./startup.sh"]
+CMD ["java", "-jar", "/opt/app/app.jar"]

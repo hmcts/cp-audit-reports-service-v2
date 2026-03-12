@@ -14,7 +14,8 @@ services:
   app:
     container_name: app
     build:
-      context: .
+      context: ..
+      dockerfile: docker/Dockerfile
     depends_on:
       wiremock:
         condition: service_healthy
