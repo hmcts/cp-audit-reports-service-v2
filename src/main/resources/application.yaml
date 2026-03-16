@@ -65,7 +65,7 @@ service:
   azure:
     token-type: ${CP_AZURE_TOKEN_TYPE:AZURE}
     scopes:
-      - 'https://api.fabric.microsoft.com/default'
+      - 'https://api.fabric.microsoft.com/.default'
     fabric:
       base-url: ${CP_AZURE_FABRIC_BASE_URL:https://api.fabric.microsoft.com/}
       path: 'v1/workspaces/{WORKSPACE_ID}/items/{ITEM_ID}/jobs/Pipeline/instances'
