@@ -26,6 +26,7 @@ public class ApiTestBase<T> {
 
         return get(url, httpHeaders(Map.of("CJSCPPUID", "alice")));
     }
+
     protected ResponseEntity<T> get(final String url, final HttpHeaders headers) {
 
         return http.exchange(baseUrl + url, HttpMethod.GET, new HttpEntity<>(headers), responseType);
