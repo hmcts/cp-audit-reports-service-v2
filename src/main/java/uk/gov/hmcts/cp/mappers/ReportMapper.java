@@ -12,7 +12,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 @Mapper(componentModel = SPRING)
 public interface ReportMapper extends Converter<Report, AuditReportListingItem> {
 
-    default URI stringToUri(String text) {
+    default URI stringToUri(final String text) {
         return URI.create(text);
     }
 }
