@@ -24,12 +24,11 @@ public class ApiTestBase<T> {
 
     protected ResponseEntity<T> get(final String url) {
 
-        return http.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+        return get(url, httpHeaders(Map.of("CJSCPPUID", "alice")));
     }
+    protected ResponseEntity<T> get(final String url, final HttpHeaders headers) {
 
-    protected <R> ResponseEntity<T> post(final String url, final R request, final HttpHeaders headers) {
-
-        return http.exchange(baseUrl + url, HttpMethod.POST, new HttpEntity<>(request, headers), responseType);
+        return http.exchange(baseUrl + url, HttpMethod.GET, new HttpEntity<>(headers), responseType);
     }
 
     protected static HttpHeaders httpHeaders(final Map<String, String> headers) {
@@ -39,5 +38,10 @@ public class ApiTestBase<T> {
                         Map.Entry::getKey, entry -> List.of(entry.getValue())
                 ))
         ));
+    }
+
+    protected <R> ResponseEntity<T> post(final String url, final R request, final HttpHeaders headers) {
+
+        return http.exchange(baseUrl + url, HttpMethod.POST, new HttpEntity<>(request, headers), responseType);
     }
 }
