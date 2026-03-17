@@ -14,6 +14,7 @@ public interface ReportUtils {
                 UUID.randomUUID().toString(),
                 "audit@example.com",
                 "reference",
+                "http://localhost:8083/reports/abc",
                 LocalDate.now().minusDays(1).toString(),
                 LocalDate.now().plusDays(1).toString(),
                 false,

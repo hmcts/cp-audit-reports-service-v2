@@ -9,6 +9,7 @@ public record Report(
         String auditUserId,
         String auditUserEmail,
         String auditReportReference,
+        String downloadUrl,
         String startDate,
         String endDate,
         boolean allUsers,

@@ -22,10 +22,10 @@ public class ReportMapperTest {
         AuditReportListingItem result =  reportMapper.convert(report);
 
         // Then
-        assertThat(result.getAuditReportReference()).isEqualTo(report.auditReportReference());
         assertThat(result.getAuditUserId().toString()).isEqualTo(report.auditUserId());
         assertThat(result.getAuditUserEmail()).isEqualTo(report.auditUserEmail());
         assertThat(result.getAuditReportReference()).isEqualTo(report.auditReportReference());
+        assertThat(result.getDownloadUrl().toString()).isEqualTo(report.downloadUrl());
         assertThat(result.getStartDate()).isEqualTo(report.startDate());
         assertThat(result.getEndDate()).isEqualTo(report.endDate());
         assertThat(result.getAllUsers()).isEqualTo(report.allUsers());
