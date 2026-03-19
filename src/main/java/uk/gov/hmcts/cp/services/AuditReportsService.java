@@ -21,12 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static uk.gov.hmcts.cp.entities.output.ReportResult.toResult;
+import static uk.gov.hmcts.cp.utility.MapUtils.*;
 import static uk.gov.hmcts.cp.utility.StreamUtils.split;
 
 @Slf4j
@@ -39,14 +41,24 @@ public record AuditReportsService(
         TokenRequestContext context,
         Function<TokenRequestContext, AccessToken> azureAccess
 ) {
+
     public List<Report> getReports() {
 
         return reportRequests.
                 listEntities().
                 mapPage(TableEntity::getProperties).
+                mapPage(transformValues(propertyTransformers())).
                 mapPage(Report.fromMap(objectMapper)).
                 stream().
                 toList();
+    }
+
+    private Map<String, UnaryOperator<Object>> propertyTransformers() {
+        return Map.of("downloadUrl", toObjectUnaryOperator(this::toTimeLimitedUrl));
+    }
+
+    private String toTimeLimitedUrl(final String downloadUrl) {
+        return downloadUrl;
     }
 
     @SuppressWarnings("PMD")
