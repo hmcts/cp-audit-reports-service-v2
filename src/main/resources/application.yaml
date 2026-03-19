@@ -66,16 +66,12 @@ service:
     token-type: ${CP_AZURE_TOKEN_TYPE:AZURE}
     scopes:
       - 'https://api.fabric.microsoft.com/.default'
+    connection-string: ${CP_AZURE_CONNECTION_STRING:UseDevelopmentStorage=true}
     fabric:
       base-url: ${CP_AZURE_FABRIC_BASE_URL:https://api.fabric.microsoft.com/}
       path: 'v1/workspaces/{WORKSPACE_ID}/items/{ITEM_ID}/jobs/Pipeline/instances'
       workspace-id: ${CP_AZURE_FABRIC_WORKSPACE_ID}
       item-id: ${CP_AZURE_FABRIC_ITEM_ID}
-  table:
-    endpoint: ${CP_TABLE_ENDPOINT:https://saauditreportstorage.table.core.windows.net}
-    sas-token: ${CP_TABLE_SAS_TOKEN:default}
-    azure-key: ${CP_AZURE_CREDS_KEY:default}
-    azure-name: ${CP_AZURE_CREDS_NAME:default}
   users:
     path: 'usersgroups-query-api/query/api/rest/usersgroups/users'
     media:
@@ -91,10 +87,6 @@ service:
     media:
       type: 'application'
       sub-type: 'vnd.progression.query.material-bulk+json'
-  scopes:
-    - 'this'
-    - 'that'
-    - 'other'
 
 logging:
   level:

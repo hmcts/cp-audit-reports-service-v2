@@ -62,13 +62,11 @@ services:
         condition: service_completed_successfully
     environment:
       CP_CAR_BASE_URL: http://wiremock:8083/
-      CP_TABLE_ENDPOINT: http://azurite:10002/test
-      CP_AZURE_CREDS_KEY: password
-      CP_AZURE_CREDS_NAME: test
       CP_AZURE_TOKEN_TYPE: TEST
       CP_AZURE_FABRIC_BASE_URL: http://wiremock:8083/
       CP_AZURE_FABRIC_WORKSPACE_ID: 5323aeaf-c852-4a6b-9d37-5acd8cda6b87
       CP_AZURE_FABRIC_ITEM_ID: 9a13afd6-d911-4845-b7a6-747574908323
+      CP_AZURE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=test;AccountKey=password;TableEndpoint=http://azurite:10002/test;
       AUDITREPORTS_SYSTEM_USER_ID: test
     ports:
       - "8082:8082"

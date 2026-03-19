@@ -5,7 +5,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.util.List;
 
 public record AzureProperties(
-        TokenType tokenType,
         List<String> scopes,
+        TokenType tokenType,
+        String connectionString,
         @NestedConfigurationProperty FabricProperties fabric
 ) { }

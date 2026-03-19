@@ -1,7 +1,6 @@
 package uk.gov.hmcts.cp.config;
 
 import com.azure.core.credential.AccessToken;
-import com.azure.core.credential.AzureNamedKeyCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.properties.TableProperties;
 
 import java.util.function.Function;
 
@@ -41,25 +39,10 @@ public class ClientConfig {
     }
 
     @Bean
-    public TableServiceClient tableServiceClient(
-            final TableProperties settings,
-            final AzureNamedKeyCredential credential
-    ) {
+    public TableServiceClient tableServiceClient(final AzureProperties settings) {
         return new TableServiceClientBuilder().
-                endpoint(settings.endpoint()).
-//              sasToken(settings.sasToken()).
-                credential(credential).
+                connectionString(settings.connectionString()).
                 buildClient();
-    }
-
-    @Bean
-    public TableProperties tableProperties(final ServiceProperties settings) {
-        return settings.table();
-    }
-
-    @Bean
-    public AzureNamedKeyCredential azureCredential(final TableProperties settings) {
-        return new AzureNamedKeyCredential(settings.azureName(), settings.azureKey());
     }
 
     @Bean
