@@ -52,7 +52,7 @@ public class RequestMapperTest {
         // Then
         assertThat(result.auditUserId()).isEqualTo(audit.userId());
         assertThat(result.auditUserEmail()).isEqualTo(audit.email());
-        assertThat(result.auditReference().length()).isEqualTo(15);
+        assertThat(result.auditReportReference().length()).isEqualTo(15);
 
         assertThat(result.startDate()).isEqualTo(request.getStartDate().toString());
         assertThat(result.endDate()).isEqualTo(request.getEndDate().toString());

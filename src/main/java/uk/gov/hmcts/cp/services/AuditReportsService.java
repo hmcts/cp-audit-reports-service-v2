@@ -71,11 +71,11 @@ public record AuditReportsService(
                     map(URI::getPath).
                     map(split("/")).
                     flatMap(StreamUtils::last).
-                    map(toResult(reportRequest.auditReference()));
+                    map(toResult(reportRequest.auditReportReference()));
 
         } catch (RuntimeException ex) {
 
-            log.warn("RequestReport reference {} failed, status code {}", reportRequest.auditReference(), ex.getMessage());
+            log.warn("RequestReport reference {} failed, status code {}", reportRequest.auditReportReference(), ex.getMessage());
             return Optional.empty();
         }
     }

@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 public record ReportRequest(
         String auditUserId,
         String auditUserEmail,
-        String auditReference,
+        String auditReportReference,
         String startDate,
         String endDate,
         boolean allUsers,
@@ -22,7 +22,7 @@ public record ReportRequest(
 
     public ReportRequest {
 
-        if (Stream.of(auditUserId, auditUserEmail, auditReference, startDate, endDate).
+        if (Stream.of(auditUserId, auditUserEmail, auditReportReference, startDate, endDate).
                 anyMatch(StringUtils::isNullOrEmpty) ||
                 !allUsers && StringUtils.isNullOrEmpty(userEmail) ||
                 switch (searchCriteria) {
