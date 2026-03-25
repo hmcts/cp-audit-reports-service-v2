@@ -6,6 +6,9 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE:-eclipse-temurin:25-jre}
 
+COPY azurite/cert.pem /root/
+RUN keytool -importcert -file /root/cert.pem -cacerts -noprompt -alias azurite
+
 # run as non-root ... group and user "app"
 RUN groupadd -r app && useradd -r -g app app
 WORKDIR /app

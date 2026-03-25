@@ -7,6 +7,7 @@ import java.util.List;
 public record AzureProperties(
         List<String> scopes,
         TokenType tokenType,
-        String connectionString,
+        CloudType cloudType,
+        String tableEndpoint,
         @NestedConfigurationProperty FabricProperties fabric
 ) { }

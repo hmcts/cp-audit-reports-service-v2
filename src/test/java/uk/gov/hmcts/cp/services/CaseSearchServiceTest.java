@@ -5,15 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.cp.entities.output.Case;
 import uk.gov.hmcts.cp.entities.output.Cases;
-import uk.gov.hmcts.cp.properties.AzureProperties;
-import uk.gov.hmcts.cp.properties.ClientProperties;
-import uk.gov.hmcts.cp.properties.MediaProperties;
-import uk.gov.hmcts.cp.properties.ServiceProperties;
+import uk.gov.hmcts.cp.properties.*;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static uk.gov.hmcts.cp.properties.CloudType.AZURE;
 import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +25,7 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
     @Override
     CaseSearchService createSearchService() {
         return new CaseSearchService(restClient, new ServiceProperties(
-                "", "", new AzureProperties(List.of("test"), TEST, null, null), null,
+                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null), null,
                 new ClientProperties("path", new MediaProperties("application", "json")), null));
     }
 
