@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
-import uk.gov.hmcts.cp.properties.*;
+import uk.gov.hmcts.cp.properties.AzureProperties;
+import uk.gov.hmcts.cp.properties.CloudType;
+import uk.gov.hmcts.cp.properties.FabricProperties;
+import uk.gov.hmcts.cp.properties.ServiceProperties;
+import uk.gov.hmcts.cp.properties.TokenType;
 
 import java.util.function.Function;
 

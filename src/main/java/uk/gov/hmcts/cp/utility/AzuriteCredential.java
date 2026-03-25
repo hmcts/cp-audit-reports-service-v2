@@ -14,7 +14,7 @@ import java.util.Date;
 public class AzuriteCredential implements TokenCredential {
 
     @Override
-    public Mono<AccessToken> getToken(TokenRequestContext request) {
+    public Mono<AccessToken> getToken(final TokenRequestContext request) {
         return Mono.just(getTokenSync(request));
     }
 

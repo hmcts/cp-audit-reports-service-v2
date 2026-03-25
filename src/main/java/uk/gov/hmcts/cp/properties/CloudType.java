@@ -13,7 +13,7 @@ public enum CloudType {
 
     private final Supplier<TokenCredential> credentialSupplier;
 
-    CloudType(Supplier<TokenCredential> credentialSupplier) {
+    CloudType(final Supplier<TokenCredential> credentialSupplier) {
         this.credentialSupplier = credentialSupplier;
     }
 
