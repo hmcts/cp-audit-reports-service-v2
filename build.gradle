@@ -61,4 +61,7 @@ dependencies {
 
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+  testImplementation 'org.wiremock:wiremock-jetty12:3.13.2'
+  testImplementation(platform('org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.7'))
 }

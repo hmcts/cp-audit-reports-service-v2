@@ -52,6 +52,11 @@ jwt:
   filter:
     enabled: false
 
+authz:
+  http:
+    enabled: true
+    identity-url-template: ${CP_CDK_BASE_URL:http://localhost:8080/}usersgroups-query-api/query/api/rest/usersgroups/users/logged-in-user/permissions
+
 service:
   base-url: ${CP_CAR_BASE_URL:http://localhost:8083/}
   cjs-cp-uid: ${AUDITREPORTS_SYSTEM_USER_ID}
