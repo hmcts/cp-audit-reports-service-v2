@@ -8,7 +8,7 @@
     "headers": {
       "Content-Type": "application/vnd.systemid.mappings+json"
     },
-    "jsonBody":{
+    "jsonBody": {
       "systemIds": [
         {
           "targetId": "123",

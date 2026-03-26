@@ -1,0 +1,69 @@
+import uk.gov.moj.cpp.authz.drools.Outcome;
+import uk.gov.moj.cpp.authz.drools.Action;
+
+global uk.gov.moj.cpp.authz.http.providers.UserAndGroupProvider userAndGroupProvider;
+
+rule "Allow GET /user/id for System Users and Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "GET /user/id")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System Users", "Auditors"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /user/email for System Users and Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "GET /user/email")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System Users", "Auditors"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /case/id for System Users and Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "GET /case/id")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System Users", "Auditors"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /case/urn for System Users and Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "GET /case/urn")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System Users", "Auditors"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /material/id for System Users and Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "GET /material/id")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "System Users", "Auditors"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow GET /reports for Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "GET /reports")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Auditors")) and
+  eval(userAndGroupProvider.hasPermission($a, "{\"object\":\"Crime Platform Audit\",\"action\":\"create\"}"))
+then
+  $o.setSuccess(true);
+end
+
+rule "Allow POST /reports for Auditors"
+when
+  $o: Outcome()
+  $a: Action(name == "POST /reports")
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Auditors")) and
+  eval(userAndGroupProvider.hasPermission($a, "{\"object\":\"Crime Platform Audit\",\"action\":\"create\"}"))
+then
+  $o.setSuccess(true);
+end
