@@ -52,7 +52,8 @@ rule "Allow GET /reports for Auditors"
 when
   $o: Outcome()
   $a: Action(name == "GET /reports")
-  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Auditors"))
+  eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Auditors")) and
+  eval(userAndGroupProvider.hasPermission($a, "{\"object\":\"Crime Platform Audit\",\"action\":\"create\"}"))
 then
   $o.setSuccess(true);
 end

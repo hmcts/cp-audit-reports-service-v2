@@ -20,7 +20,6 @@ services:
         condition: service_healthy
     environment:
       CP_CAR_BASE_URL: http://wiremock:8083/
-      CP_CDK_BASE_URL: http://wiremock:8083/
       CP_AZURE_TOKEN_TYPE: TEST
       CP_AZURE_FABRIC_BASE_URL: http://wiremock:8083/
       CP_AZURE_FABRIC_WORKSPACE_ID: 5323aeaf-c852-4a6b-9d37-5acd8cda6b87
