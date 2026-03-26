@@ -45,22 +45,26 @@ dependencies {
     implementation "io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64"
   }
 
-  implementation 'uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-2336f78'
-
   implementation platform('com.azure:azure-sdk-bom:1.3.4')
   implementation 'com.azure:azure-identity'
   implementation 'com.azure:azure-data-tables'
 
+  implementation 'uk.gov.hmcts.cp:cp-auth-rules-filter:1.0.7'
+  implementation 'uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-2336f78'
+
   // --- Observability / Actuator / OTEL / Prometheus ---
-  implementation 'org.springframework.boot:spring-boot-starter-actuator'
-  implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+  implementation 'org.springframework.boot:spring-boot-starter-actuator:4.0.3'
+  implementation 'org.springframework.boot:spring-boot-starter-opentelemetry:4.0.3'
   implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
   implementation 'io.jsonwebtoken:jjwt:0.13.0'
   implementation 'io.swagger.core.v3:swagger-core:2.2.36'
 
+  testImplementation platform('org.junit:junit-bom:5.13.4')
+
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-  testImplementation platform('org.junit:junit-bom:5.13.4')
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation 'org.wiremock:wiremock-jetty12:3.13.2'
+  testImplementation(platform('org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.7'))
 }
