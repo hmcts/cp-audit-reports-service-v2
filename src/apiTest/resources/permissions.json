@@ -1,0 +1,35 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/usersgroups-query-api/query/api/rest/usersgroups/users/logged-in-user/permissions",
+    "headers": {
+      "CJSCPPUID": {
+        "equalTo": "audit"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/vnd.usersgroups.get-logged-in-user-permissions+json"
+    },
+    "jsonBody": {
+      "groups": [
+        {
+          "groupId": "123",
+          "groupName": "Auditors",
+          "prosecutingAuthority": "CPS"
+        }
+      ],
+      "switchableRoles": [],
+      "permissions": [
+        {
+          "permissionId": "456",
+          "object": "Crime Platform Audit",
+          "action": "create",
+          "description": "Description"
+        }
+      ]
+    }
+  }
+}
