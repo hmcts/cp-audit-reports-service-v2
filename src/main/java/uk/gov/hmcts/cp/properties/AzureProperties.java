@@ -8,6 +8,7 @@ public record AzureProperties(
         List<String> scopes,
         TokenType tokenType,
         CloudType cloudType,
+        String tableName,
         String tableEndpoint,
         @NestedConfigurationProperty FabricProperties fabric
 ) { }

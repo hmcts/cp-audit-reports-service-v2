@@ -5,7 +5,6 @@ import com.azure.core.credential.TokenRequestContext;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.models.TableEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -33,7 +32,7 @@ import static uk.gov.hmcts.cp.utility.StreamUtils.split;
 @Component
 public record AuditReportsService(
         RestClient restClient,
-        @Qualifier("reportrequests") TableClient reportRequests,
+        TableClient reportRequests,
         ObjectMapper objectMapper,
         FabricProperties fabric,
         TokenRequestContext context,

@@ -30,7 +30,7 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
     @Override
     MaterialSearchService createSearchService() {
         return new MaterialSearchService(restClient, new ServiceProperties(
-                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null), null, null,
+                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null), null, null,
                 new ClientProperties("path", new MediaProperties("application", "json"))));
     }
 

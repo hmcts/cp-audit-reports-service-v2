@@ -6,7 +6,6 @@ import com.azure.core.credential.TokenRequestContext;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -66,9 +65,11 @@ public class ClientConfig {
     }
 
     @Bean
-    @Qualifier("reportrequests")
-    public TableClient reportRequests(final TableServiceClient tableServiceClient) {
-        return tableServiceClient.getTableClient("reportrequests");
+    public TableClient reportRequests(
+            final AzureProperties settings,
+            final TableServiceClient tableServiceClient
+    ) {
+        return tableServiceClient.getTableClient(settings.tableName());
     }
 
     @Bean
