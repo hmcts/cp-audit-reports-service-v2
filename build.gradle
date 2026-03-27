@@ -45,7 +45,6 @@ dependencies {
     implementation "io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64"
   }
 
-<<<<<<< HEAD
   implementation platform('com.azure:azure-sdk-bom:1.3.5')
 
   implementation 'com.azure:azure-identity'
