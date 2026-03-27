@@ -45,9 +45,11 @@ dependencies {
     implementation "io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64"
   }
 
-  implementation platform('com.azure:azure-sdk-bom:1.3.4')
+  implementation platform('com.azure:azure-sdk-bom:1.3.5')
+
   implementation 'com.azure:azure-identity'
   implementation 'com.azure:azure-data-tables'
+  implementation 'com.azure:azure-storage-blob'
 
   implementation 'uk.gov.hmcts.cp:cp-auth-rules-filter:1.0.7'
   implementation 'uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-2336f78'

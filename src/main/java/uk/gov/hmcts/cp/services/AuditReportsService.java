@@ -58,7 +58,19 @@ public record AuditReportsService(
     }
 
     private String toTimeLimitedUrl(final String downloadUrl) {
-        return downloadUrl;
+/*
+        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder().buildClient();
+
+        var xx = blobServiceClient.createBlobContainer("d");
+        var yy = xx.getBlobClient("yy");
+
+        blobServiceClient.generateAccountSas()
+
+        BlobClientBuilder blobClientBuilder = new BlobClientBuilder();
+        xx.getBlobClient()
+*/
+
+        return downloadUrl; // Move to own service with interface to be mocked/configured?
     }
 
     @SuppressWarnings("PMD")

@@ -35,7 +35,7 @@ services:
       azurite:
         condition: service_healthy
     environment:
-      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=test;AccountKey=password;TableEndpoint=http://azurite:10002/test;
+      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=test;AccountKey=password;BlobEndpoint=http://azurite:10000/test;QueueEndpoint=http://azurite:10001/test;TableEndpoint=http://azurite:10002/test;
 
   azurite_data:
     container_name: azurite_data

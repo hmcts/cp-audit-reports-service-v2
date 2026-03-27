@@ -8,6 +8,8 @@ import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -89,7 +91,17 @@ public class ClientConfig {
     }
 
     @Bean
+    public BlobServiceClient blobServiceClient(final BlobServiceClientBuilder builder) {
+        return builder.endpoint("https://saauditreportstorage.table.core.windows.net").buildClient();
+    }
+
+    @Bean
     public DefaultAzureCredentialBuilder azureClientBuilder() {
         return new DefaultAzureCredentialBuilder();
+    }
+
+    @Bean
+    public BlobServiceClientBuilder blobServiceClientBuilder() {
+        return new BlobServiceClientBuilder();
     }
 }
