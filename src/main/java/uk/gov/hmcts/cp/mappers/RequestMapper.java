@@ -1,11 +1,11 @@
 package uk.gov.hmcts.cp.mappers;
 
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.cp.entities.input.ReportRequest;
 import uk.gov.hmcts.cp.openapi.model.AuditReportRequest;
+import org.mapstruct.Context;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.cp.services.CaseSearchService;
 import uk.gov.hmcts.cp.services.UserSearchService;
 

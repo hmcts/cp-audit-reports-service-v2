@@ -20,6 +20,8 @@ bin/main/application.yaml
 *.iml
 *.ipr
 
+*.pem
+
 .DS_Store
 
 applicationinsights-agent-*.jar

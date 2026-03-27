@@ -6,21 +6,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.cp.http.base.ApiTestBase;
 import uk.gov.hmcts.cp.openapi.model.AuditReportRequest;
+import uk.gov.hmcts.cp.openapi.model.GetReportListing200Response;
 import uk.gov.hmcts.cp.openapi.model.PostReportRequest202Response;
 
 import java.time.LocalDate;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.cp.openapi.model.AuditReportListingItem.PipelineStatusEnum.PENDING;
 import static uk.gov.hmcts.cp.openapi.model.AuditReportRequest.SearchCriteriaEnum.ALL_ACTIVITY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class AuditReportsApiTest extends ApiTestBase<PostReportRequest202Response> {
+class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
 
     public AuditReportsApiTest() {
-        super(PostReportRequest202Response.class);
+        super(GetReportListing200Response.class);
     }
 
     @Test
@@ -41,7 +44,7 @@ class AuditReportsApiTest extends ApiTestBase<PostReportRequest202Response> {
         final HttpHeaders headers = httpHeaders(Map.of("CJSCPPUID", "audit"));
 
         // When
-        final ResponseEntity<PostReportRequest202Response> response = post("/reports", request, headers);
+        final ResponseEntity<PostReportRequest202Response> response = post("/reports", request, headers, PostReportRequest202Response.class);
 
         // Then
         assertEquals(OK, response.getStatusCode());
@@ -72,5 +75,19 @@ class AuditReportsApiTest extends ApiTestBase<PostReportRequest202Response> {
 
         // Then
         assertEquals(BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
+    void get_reports_endpoint_returns_preloaded_test_data() {
+
+        // When
+        final ResponseEntity<GetReportListing200Response> response = get("/reports");
+
+        // Then
+        assertEquals(OK, response.getStatusCode());
+        assertEquals(1, response.getBody().getReports().size());
+        assertNotNull(response.getBody().getReports().getFirst());
+        assertEquals("550e8400-e29b-41d4-a716-446655440000", response.getBody().getReports().getFirst().getPipelineJobId().toString());
+        assertEquals(PENDING, response.getBody().getReports().getFirst().getPipelineStatus());
     }
 }

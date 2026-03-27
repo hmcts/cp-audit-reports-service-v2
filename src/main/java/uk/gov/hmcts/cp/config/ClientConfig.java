@@ -1,15 +1,19 @@
 package uk.gov.hmcts.cp.config;
 
 import com.azure.core.credential.AccessToken;
+import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
-import com.azure.identity.DefaultAzureCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.properties.AzureProperties;
+import uk.gov.hmcts.cp.properties.CloudType;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
+import uk.gov.hmcts.cp.properties.TokenType;
 
 import java.util.function.Function;
 
@@ -27,11 +31,45 @@ public class ClientConfig {
     }
 
     @Bean
+    public TokenType tokenType(final AzureProperties settings) {
+        return settings.tokenType();
+    }
+
+    @Bean
+    public CloudType credentialType(final AzureProperties settings) {
+        return settings.cloudType();
+    }
+
+    @Bean
+    public TokenCredential azureCredential(final CloudType cloudType) {
+        return cloudType.getCredential();
+    }
+
+    @Bean
     public Function<TokenRequestContext, AccessToken> azureAccess(
-            final AzureProperties settings,
-            final DefaultAzureCredential azureCredential
+            final TokenType tokenType,
+            final TokenCredential azureCredential
     ) {
-        return settings.tokenType().getFunction(azureCredential);
+        return tokenType.getFunction(azureCredential);
+    }
+
+    @Bean
+    public TableServiceClient tableServiceClient(
+            final AzureProperties settings,
+            final TokenCredential azureCredential
+    ) {
+        return new TableServiceClientBuilder().
+                endpoint(settings.tableEndpoint()).
+                credential(azureCredential).
+                buildClient();
+    }
+
+    @Bean
+    public TableClient reportRequests(
+            final AzureProperties settings,
+            final TableServiceClient tableServiceClient
+    ) {
+        return tableServiceClient.getTableClient(settings.tableName());
     }
 
     @Bean
@@ -40,22 +78,12 @@ public class ClientConfig {
     }
 
     @Bean
-    public AzureProperties audienceProperties(final ServiceProperties settings) {
+    public AzureProperties azureProperties(final ServiceProperties settings) {
         return settings.azure();
     }
 
     @Bean
     public FabricProperties fabricProperties(final AzureProperties settings) {
         return settings.fabric();
-    }
-
-    @Bean
-    public DefaultAzureCredential azureClient(final DefaultAzureCredentialBuilder builder) {
-        return builder.build();
-    }
-
-    @Bean
-    public DefaultAzureCredentialBuilder azureClientBuilder() {
-        return new DefaultAzureCredentialBuilder();
     }
 }
