@@ -32,7 +32,7 @@ public class ReportMapperTest {
         assertThat(result.getUserId().toString()).isEqualTo(report.userId());
         assertThat(result.getSearchCriteria().toString()).isEqualTo("all-activity");
         assertThat(result.getCaseUrn()).isEqualTo(report.caseUrn());
-        assertThat(result.getCaseID().toString()).isEqualTo(report.caseID());
+        assertThat(result.getCaseId().toString()).isEqualTo(report.caseId());
         assertThat(result.getMaterialIds().toString()).isEqualTo(report.materialIds());
         assertThat(result.getHearingId().toString()).isEqualTo(report.hearingId());
         assertThat(result.getPipelineJobId().toString()).isEqualTo(report.pipelineJobId());

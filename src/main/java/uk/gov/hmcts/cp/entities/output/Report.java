@@ -17,7 +17,7 @@ public record Report(
         String userId,
         String searchCriteria,
         String caseUrn,
-        String caseID,
+        String caseId,
         String materialIds,
         String hearingId,
         String pipelineJobId,

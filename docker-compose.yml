@@ -15,7 +15,10 @@ services:
   azurite:
     container_name: azurite
     hostname: azurite
-    image: mcr.microsoft.com/azure-storage/azurite
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    command: azurite --loose --location /data --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --oauth basic --cert /root/cert.pem --key /root/key.pem
+    volumes:
+      - ./azurite:/root
     healthcheck:
       test: nc 127.0.0.1 10000 -z
       interval: 1s
@@ -35,7 +38,8 @@ services:
       azurite:
         condition: service_healthy
     environment:
-      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=test;AccountKey=password;BlobEndpoint=http://azurite:10000/test;QueueEndpoint=http://azurite:10001/test;TableEndpoint=http://azurite:10002/test;
+      REQUESTS_CA_BUNDLE: /opt/cert.pem
+      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=test;AccountKey=password;BlobEndpoint=https://azurite:10000/test;QueueEndpoint=https://azurite:10001/test;TableEndpoint=https://azurite:10002/test;
 
   azurite_data:
     container_name: azurite_data
@@ -47,9 +51,10 @@ services:
       azurite_init:
         condition: service_completed_successfully
     environment:
-      AZURE_ENDPOINT: http://azurite:10002/test
+      AZURE_ENDPOINT: https://azurite:10002/test
       AZURE_CREDS_KEY: password
       AZURE_CREDS_NAME: test
+      REQUESTS_CA_BUNDLE: /opt/cert.pem
 
   app:
     container_name: app
@@ -66,6 +71,8 @@ services:
       CP_AZURE_CREDS_KEY: password
       CP_AZURE_CREDS_NAME: test
       CP_AZURE_TOKEN_TYPE: TEST
+      CP_AZURE_CLOUD_TYPE: AZURITE
+      CP_AZURE_TABLE_ENDPOINT: https://azurite:10002/test
       CP_AZURE_FABRIC_BASE_URL: http://wiremock:8083/
       CP_AZURE_FABRIC_WORKSPACE_ID: 5323aeaf-c852-4a6b-9d37-5acd8cda6b87
       CP_AZURE_FABRIC_ITEM_ID: 9a13afd6-d911-4845-b7a6-747574908323

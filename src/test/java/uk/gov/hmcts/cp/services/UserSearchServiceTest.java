@@ -5,15 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.cp.entities.output.User;
 import uk.gov.hmcts.cp.entities.output.Users;
-import uk.gov.hmcts.cp.properties.AzureProperties;
-import uk.gov.hmcts.cp.properties.ClientProperties;
-import uk.gov.hmcts.cp.properties.MediaProperties;
-import uk.gov.hmcts.cp.properties.ServiceProperties;
+import uk.gov.hmcts.cp.properties.*;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static uk.gov.hmcts.cp.properties.CloudType.AZURE;
 import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +25,7 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
     @Override
     UserSearchService createSearchService() {
         return new UserSearchService(restClient, new ServiceProperties(
-                "", "", new AzureProperties(TEST, List.of("test"), null), null,
+                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null), null,
                 new ClientProperties("path", new MediaProperties("application", "json")), null, null));
     }
 

@@ -11,27 +11,27 @@ public class ReportRequestTest {
 
     @ParameterizedTest
     @CsvSource({
-            "true,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,false,,john@smith.com,ALL_ACTIVITY,,,,",
-            "false,,audit@example.com,auditReference,2024-02-01,2024-04-02,false,,,ALL_ACTIVITY,,,,",
-            "false,audit123,,auditReference,2024-02-01,2024-04-02,false,,,ALL_ACTIVITY,,,,",
+            "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,false,,john@smith.com,ALL_ACTIVITY,,,,",
+            "false,,audit@example.com,auditReportReference,2024-02-01,2024-04-02,false,,,ALL_ACTIVITY,,,,",
+            "false,audit123,,auditReportReference,2024-02-01,2024-04-02,false,,,ALL_ACTIVITY,,,,",
             "false,audit123,audit@example.com,,2024-02-01,2024-04-02,false,,,ALL_ACTIVITY,,,,",
-            "false,audit123,audit@example.com,auditReference,,2024-04-02,false,,,ALL_ACTIVITY,,,,",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,,false,,,ALL_ACTIVITY,,,,",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,ALL_ACTIVITY,,,,",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,false,,,BAD_ENUM,,,,",
-            "true,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,CASE,123,abc,,",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,false,john,,CASE,123,abc,,",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,CASE,,,,",
-            "true,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,MATERIAL,,,678,",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,MATERIAL,,,,",
-            "true,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,xyz",
-            "false,audit123,audit@example.com,auditReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,",
+            "false,audit123,audit@example.com,auditReportReference,,2024-04-02,false,,,ALL_ACTIVITY,,,,",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,,false,,,ALL_ACTIVITY,,,,",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,ALL_ACTIVITY,,,,",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,false,,,BAD_ENUM,,,,",
+            "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,CASE,123,abc,,",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,false,john,,CASE,123,abc,,",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,CASE,,,,",
+            "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,MATERIAL,,,678,",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,MATERIAL,,,,",
+            "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,xyz",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,",
     })
     void validateReportRequest(
             boolean shouldBeValid,
             String auditUserId,
             String auditUserEmail,
-            String auditReference,
+            String auditReportReference,
             String startDate,
             String endDate,
             boolean allUsers,
@@ -45,7 +45,7 @@ public class ReportRequestTest {
     ) throws Throwable {
 
         final Executable createReportRequest = () -> new ReportRequest(
-                auditUserId, auditUserEmail, auditReference,
+                auditUserId, auditUserEmail, auditReportReference,
                 startDate, endDate, allUsers,
                 userId, userEmail, searchCriteria,
                 caseId, caseUrn, materialIds, hearingId

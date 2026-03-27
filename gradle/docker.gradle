@@ -1,6 +1,5 @@
 dockerCompose {
   useComposeFiles = ['docker-compose.yml']
-  startedServices = ['app', 'wiremock']
 
   buildBeforeUp = true
   waitForTcpPorts = true
@@ -10,6 +9,7 @@ dockerCompose {
   removeOrphans = true
   stopContainers = true
   removeContainers = true
+  includeDependencies = true
 
   projectName = "${rootProject.name}-it".replaceAll('[^A-Za-z0-9]', '')
 

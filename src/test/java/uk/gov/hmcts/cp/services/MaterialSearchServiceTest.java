@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.cp.properties.CloudType.AZURE;
 import static uk.gov.hmcts.cp.properties.TokenType.TEST;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +30,7 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
     @Override
     MaterialSearchService createSearchService() {
         return new MaterialSearchService(restClient, new ServiceProperties(
-                "", "", new AzureProperties(TEST, List.of("test"), null), null, null, null,
+                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null), null, null, null,
                 new ClientProperties("path", new MediaProperties("application", "json"))));
     }
 

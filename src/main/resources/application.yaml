@@ -69,8 +69,11 @@ service:
   cjs-cp-uid: ${AUDITREPORTS_SYSTEM_USER_ID}
   azure:
     token-type: ${CP_AZURE_TOKEN_TYPE:AZURE}
+    cloud-type: ${CP_AZURE_CLOUD_TYPE:AZURE}
     scopes:
       - 'https://api.fabric.microsoft.com/.default'
+    table-name: ${CP_AZURE_TABLE_NAME:reportrequests}
+    table-endpoint: ${CP_AZURE_TABLE_ENDPOINT:https://saauditreportstorage.table.core.windows.net}
     fabric:
       base-url: ${CP_AZURE_FABRIC_BASE_URL:https://api.fabric.microsoft.com/}
       path: 'v1/workspaces/{WORKSPACE_ID}/items/{ITEM_ID}/jobs/Pipeline/instances'
