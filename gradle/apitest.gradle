@@ -19,10 +19,6 @@ tasks.register('apiTest', Test) {
   }
 }
 
-dockerCompose {
-  includeDependencies = true
-}
-
 tasks.named('check') {
   dependsOn tasks.named('apiTest')
 }

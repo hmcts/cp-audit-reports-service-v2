@@ -1,14 +1,11 @@
 package uk.gov.hmcts.cp.config;
 
 import com.azure.core.credential.AccessToken;
-import com.azure.core.credential.AzureNamedKeyCredential;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
-import com.azure.identity.DefaultAzureCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -93,18 +90,8 @@ public class ClientConfig {
     }
 
     @Bean
-    public DefaultAzureCredential azureClient(final DefaultAzureCredentialBuilder builder) {
-        return builder.build();
-    }
-
-    @Bean
     public BlobServiceClient blobServiceClient(final BlobServiceClientBuilder builder) {
         return builder.endpoint("https://saauditreportstorage.table.core.windows.net").buildClient();
-    }
-
-    @Bean
-    public DefaultAzureCredentialBuilder azureClientBuilder() {
-        return new DefaultAzureCredentialBuilder();
     }
 
     @Bean
