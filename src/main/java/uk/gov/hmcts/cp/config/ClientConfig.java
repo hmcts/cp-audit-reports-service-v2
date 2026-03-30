@@ -11,7 +11,6 @@ import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -19,7 +18,6 @@ import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.CloudType;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
-import uk.gov.hmcts.cp.properties.TableProperties;
 import uk.gov.hmcts.cp.properties.TokenType;
 
 import java.util.function.Function;
@@ -77,34 +75,6 @@ public class ClientConfig {
             final TableServiceClient tableServiceClient
     ) {
         return tableServiceClient.getTableClient(settings.tableName());
-    }
-
-    @Bean
-    public TableServiceClient tableServiceClient(
-            final TableProperties settings,
-            final AzureNamedKeyCredential credential
-    ) {
-        return new TableServiceClientBuilder().
-                endpoint(settings.endpoint()).
-//              sasToken(settings.sasToken()).
-                credential(credential).
-                buildClient();
-    }
-
-    @Bean
-    public TableProperties tableProperties(final ServiceProperties settings) {
-        return settings.table();
-    }
-
-    @Bean
-    public AzureNamedKeyCredential azureCredential(final TableProperties settings) {
-        return new AzureNamedKeyCredential(settings.azureName(), settings.azureKey());
-    }
-
-    @Bean
-    @Qualifier("reportrequests")
-    public TableClient reportRequests(final TableServiceClient tableServiceClient) {
-        return tableServiceClient.getTableClient("reportrequests");
     }
 
     @Bean

@@ -8,7 +8,6 @@ public record ServiceProperties(
     String baseUrl,
     String cjsCpUid,
     @NestedConfigurationProperty AzureProperties azure,
-    @NestedConfigurationProperty TableProperties table,
     @NestedConfigurationProperty ClientProperties users,
     @NestedConfigurationProperty ClientProperties cases,
     @NestedConfigurationProperty ClientProperties materials
