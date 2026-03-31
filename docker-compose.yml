@@ -26,6 +26,8 @@ services:
     environment:
       AZURITE_ACCOUNTS: "test:password"
     ports:
+      - "10000:10000"
+      - "10001:10001"
       - "10002:10002"
 
   azurite_init:
@@ -39,6 +41,8 @@ services:
         condition: service_healthy
     environment:
       REQUESTS_CA_BUNDLE: /opt/cert.pem
+      AZURE_STORAGE_KEY: password
+      AZURE_STORAGE_ACCOUNT: test
       AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=test;AccountKey=password;BlobEndpoint=https://azurite:10000/test;QueueEndpoint=https://azurite:10001/test;TableEndpoint=https://azurite:10002/test;
 
   azurite_data:
