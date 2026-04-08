@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.cp.entities.input.ReportRequest;
 import uk.gov.hmcts.cp.entities.output.Report;
@@ -52,6 +53,14 @@ public record AuditReportsService(
     public Optional<ReportResult> requestReport(final ReportRequest reportRequest) {
 
         try {
+            final Map<String, Object> props = objectMapper.convertValue(
+                    reportRequest, new TypeReference<>() {}
+            );
+
+            reportRequests.createEntity(
+                    new TableEntity("1", reportRequest.auditReportReference()).setProperties(props)
+            );
+
             return Optional.
                     ofNullable(restClient.
                             post().
