@@ -59,7 +59,7 @@ public record AuditReportsService(
                             headers(HttpHeaders::clear).
                             headers(this::setBearerAuth).
                             accept(APPLICATION_JSON).
-                            body(Map.of("executionData", reportRequest)).
+                            body(Map.of("executionData", Map.of("parameters", reportRequest))).
                             retrieve().
                             onStatus(not(isEqual(ACCEPTED)), (_, res) -> {
                                 throw new RuntimeException(String.valueOf(res.getStatusCode().value()));
