@@ -57,6 +57,9 @@ public record AuditReportsService(
                     reportRequest, new TypeReference<>() {}
             );
 
+            props.put("downloadUrl", "http://localhost");
+            props.put("pipelineStatus", "PENDING");
+
             reportRequests.createEntity(
                     new TableEntity("1", reportRequest.auditReportReference()).setProperties(props)
             );
