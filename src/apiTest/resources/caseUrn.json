@@ -11,7 +11,7 @@
     "jsonBody": {
       "systemIds": [
         {
-          "targetId": "123",
+          "targetId": "00000000-0000-0000-0000-000000000123",
           "sourceId": "abc",
           "targetType": "CASE_ID"
         }

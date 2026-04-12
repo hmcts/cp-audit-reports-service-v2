@@ -13,7 +13,7 @@
         {
           "materialId": "456",
           "courtDocumentId": "def",
-          "caseId": "123",
+          "caseId": "00000000-0000-0000-0000-000000000123",
           "caseUrn": "abc"
         }
       ]

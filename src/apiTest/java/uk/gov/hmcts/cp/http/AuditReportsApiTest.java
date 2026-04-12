@@ -1,6 +1,9 @@
 package uk.gov.hmcts.cp.http;
 
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -11,6 +14,7 @@ import uk.gov.hmcts.cp.openapi.model.PostReportRequest202Response;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -20,6 +24,7 @@ import static uk.gov.hmcts.cp.openapi.model.AuditReportRequest.SearchCriteriaEnu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
 
     public AuditReportsApiTest() {
@@ -27,6 +32,7 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
     }
 
     @Test
+    @Order(1)
     void submit_valid_report_request() {
 
         // Given
@@ -37,11 +43,11 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
                 "no@where.com",
                 ALL_ACTIVITY,
                 "abc",
-                "123,456",
-                "789"
+                "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002",
+                UUID.randomUUID().toString()
         );
 
-        final HttpHeaders headers = httpHeaders(Map.of("CJSCPPUID", "audit"));
+        final HttpHeaders headers = httpHeaders(Map.of("CJSCPPUID", "00000000-0000-0000-0000-000000000000"));
 
         // When
         final ResponseEntity<PostReportRequest202Response> response = post("/reports", request, headers, PostReportRequest202Response.class);
@@ -53,6 +59,7 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
     }
 
     @Test
+    @Order(2)
     void submit_invalid_report_request() {
 
         // Given
@@ -63,11 +70,11 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
                 "no@where.com",
                 ALL_ACTIVITY,
                 "abc",
-                "123,456",
-                "789"
+                "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002",
+                UUID.randomUUID().toString()
         );
 
-        final HttpHeaders headers = httpHeaders(Map.of("CJSCPPUID", "audit"));
+        final HttpHeaders headers = httpHeaders(Map.of("CJSCPPUID", "00000000-0000-0000-0000-000000000000"));
 
         // When
         final HttpClientErrorException.BadRequest exception = assertThrows(
@@ -78,6 +85,7 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
     }
 
     @Test
+    @Order(3)
     void get_reports_endpoint_returns_preloaded_test_data() {
 
         // When
@@ -85,7 +93,7 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
 
         // Then
         assertEquals(OK, response.getStatusCode());
-        assertEquals(1, response.getBody().getReports().size());
+        assertEquals(2, response.getBody().getReports().size());
         assertNotNull(response.getBody().getReports().getFirst());
         assertEquals("550e8400-e29b-41d4-a716-446655440000", response.getBody().getReports().getFirst().getPipelineJobId().toString());
         assertEquals(PENDING, response.getBody().getReports().getFirst().getPipelineStatus());

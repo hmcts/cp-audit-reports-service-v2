@@ -21,12 +21,12 @@ class CaseSearchApiTest extends ApiTestBase<GetCaseUrns200Response> {
     void cases_endpoint_returns_case_for_caseId() {
 
         // When
-        final ResponseEntity<GetCaseUrns200Response> response = get("/case/id?caseIds=123");
+        final ResponseEntity<GetCaseUrns200Response> response = get("/case/id?caseIds=00000000-0000-0000-0000-000000000123");
 
         // Then
         assertEquals(OK, response.getStatusCode());
         assertEquals(1, response.getBody().getResults().size());
-        assertEquals("123", response.getBody().getResults().get(0).getCaseId());
+        assertEquals("00000000-0000-0000-0000-000000000123", response.getBody().getResults().get(0).getCaseId());
     }
 
     @Test

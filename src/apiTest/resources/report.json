@@ -6,19 +6,19 @@
       "equalToJson": {
         "executionData": {
           "parameters": {
-            "auditUserId" : "audit",
+            "auditUserId" : "00000000-0000-0000-0000-000000000000",
             "auditUserEmail" : "audit@example.com",
             "auditReportReference" : "${json-unit.any-string}",
             "startDate" : "${json-unit.any-string}",
             "endDate" : "${json-unit.any-string}",
             "allUsers": false,
-            "userId" : "123",
+            "userId" : "00000000-0000-0000-0000-000000000123",
             "userEmail": "no@where.com",
             "searchCriteria": "ALL_ACTIVITY",
-            "caseId" : "123",
+            "caseId" : "00000000-0000-0000-0000-000000000123",
             "caseUrn": "abc",
-            "materialIds": "123,456",
-            "hearingId": "789"
+            "materialIds": "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002",
+            "hearingId": "${json-unit.any-string}"
           }
         }
       }

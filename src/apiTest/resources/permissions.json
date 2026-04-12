@@ -4,7 +4,7 @@
     "urlPath": "/usersgroups-query-api/query/api/rest/usersgroups/users/logged-in-user/permissions",
     "headers": {
       "CJSCPPUID": {
-        "equalTo": "audit"
+        "equalTo": "00000000-0000-0000-0000-000000000000"
       }
     }
   },
