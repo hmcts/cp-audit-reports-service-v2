@@ -21,12 +21,12 @@ class UserSearchApiTest extends ApiTestBase<GetUserIds200Response> {
     void users_endpoint_returns_user_for_userId() {
 
         // When
-        final ResponseEntity<GetUserIds200Response> response = get("/user/id?userIds=123");
+        final ResponseEntity<GetUserIds200Response> response = get("/user/id?userIds=00000000-0000-0000-0000-000000000123");
 
         // Then
         assertEquals(OK, response.getStatusCode());
         assertEquals(1, response.getBody().getResults().size());
-        assertEquals("123", response.getBody().getResults().get(0).getUserId());
+        assertEquals("00000000-0000-0000-0000-000000000123", response.getBody().getResults().get(0).getUserId());
     }
 
     @Test
