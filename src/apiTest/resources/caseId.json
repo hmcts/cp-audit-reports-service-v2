@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/system-id-mapper-api/rest/systemid/mappings/bulk?targetIds=123&targetType=CASE_ID"
+    "url": "/system-id-mapper-api/rest/systemid/mappings/bulk?targetIds=00000000-0000-0000-0000-000000000123&targetType=CASE_ID"
   },
   "response": {
     "status": 200,
@@ -11,7 +11,7 @@
     "jsonBody": {
       "systemIds": [
         {
-          "targetId": "123",
+          "targetId": "00000000-0000-0000-0000-000000000123",
           "sourceId": "abc",
           "targetType": "CASE_ID"
         }
