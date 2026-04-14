@@ -10,5 +10,7 @@ public record AzureProperties(
         CloudType cloudType,
         String tableName,
         String tableEndpoint,
+        String blobEndpoint,
+        Integer downloadUrlMinutesValid,
         @NestedConfigurationProperty FabricProperties fabric
 ) { }
