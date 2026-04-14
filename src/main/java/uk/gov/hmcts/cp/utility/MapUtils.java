@@ -17,7 +17,7 @@ public interface MapUtils {
         ));
     }
 
-    static UnaryOperator<Object> toObjectUnaryOperator(UnaryOperator<String> operator) {
+    static UnaryOperator<Object> toObjectUnaryOperator(final UnaryOperator<String> operator) {
 
         return obj -> operator.apply(obj.toString());
     }
