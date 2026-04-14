@@ -82,9 +82,8 @@ public record AuditReportsService(
             final OffsetDateTime keyStart = OffsetDateTime.now();
             final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
 
-            final String sasToken = blobClient.generateUserDelegationSas(
-                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")),
-                    blobServiceClient.getUserDelegationKey(keyStart, keyEnd)
+            final String sasToken = blobClient.generateSas(
+                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r"))
             );
 
             return downloadUrl + "?" + sasToken;
