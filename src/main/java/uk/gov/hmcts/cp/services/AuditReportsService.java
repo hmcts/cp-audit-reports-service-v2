@@ -7,7 +7,6 @@ import com.azure.data.tables.models.TableEntity;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import lombok.extern.slf4j.Slf4j;
@@ -70,23 +69,31 @@ public record AuditReportsService(
 
     private String toTimeLimitedUrl(final String downloadUrl) {
 
-        final List<String> segments = Arrays.stream(downloadUrl.replace(azure.blobEndpoint(), "").split("/")).toList();
+        try {
 
-        final String container = segments.getFirst();
-        final String blobName = Strings.join(segments.stream().skip(1).toList(), '/');
+            final List<String> segments = Arrays.stream(downloadUrl.replace(azure.blobEndpoint(), "").split("/")).toList();
 
-        final BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(container);
-        final BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
+            final String container = segments.getFirst();
+            final String blobName = Strings.join(segments.stream().skip(1).toList(), '/');
 
-        final OffsetDateTime keyStart = OffsetDateTime.now();
-        final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
+            final BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(container);
+            final BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
 
-        final String sasToken = blobClient.generateUserDelegationSas(
-                new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")),
-                blobServiceClient.getUserDelegationKey(keyStart, keyEnd)
-        );
+            final OffsetDateTime keyStart = OffsetDateTime.now();
+            final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
 
-        return downloadUrl + "?" + sasToken;
+            final String sasToken = blobClient.generateUserDelegationSas(
+                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")),
+                    blobServiceClient.getUserDelegationKey(keyStart, keyEnd)
+            );
+
+            return downloadUrl + "?" + sasToken;
+
+        } catch (Exception ex) {
+
+            log.warn("Failed to generate time limited downloadUrl", ex);
+            return downloadUrl;
+        }
     }
 
     @SuppressWarnings("PMD")
