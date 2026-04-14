@@ -16,7 +16,7 @@ services:
     container_name: azurite
     hostname: azurite
     image: mcr.microsoft.com/azure-storage/azurite:latest
-    command: azurite --loose --location /data --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --oauth basic --cert /root/cert.pem --key /root/key.pem
+    command: azurite --loose --skipApiVersionCheck --location /data --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --oauth basic --cert /root/cert.pem --key /root/key.pem
     volumes:
       - ./azurite:/root
     healthcheck:
@@ -73,10 +73,12 @@ services:
       CP_CAR_BASE_URL: http://wiremock:8083/
       CP_AZURE_TOKEN_TYPE: TEST
       CP_AZURE_CLOUD_TYPE: AZURITE
+      CP_AZURE_BLOB_ENDPOINT: https://azurite:10000/test/
       CP_AZURE_TABLE_ENDPOINT: https://azurite:10002/test
       CP_AZURE_FABRIC_BASE_URL: http://wiremock:8083/
       CP_AZURE_FABRIC_WORKSPACE_ID: 5323aeaf-c852-4a6b-9d37-5acd8cda6b87
       CP_AZURE_FABRIC_ITEM_ID: 9a13afd6-d911-4845-b7a6-747574908323
+      CP_DOWNLOAD_URL_MINS_VALID: 5
       AUDITREPORTS_SYSTEM_USER_ID: test
     ports:
       - "8082:8082"

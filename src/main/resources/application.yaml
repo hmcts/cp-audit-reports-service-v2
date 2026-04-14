@@ -74,6 +74,8 @@ service:
       - 'https://api.fabric.microsoft.com/.default'
     table-name: ${CP_AZURE_TABLE_NAME:reportrequests}
     table-endpoint: ${CP_AZURE_TABLE_ENDPOINT:https://saauditreportstorage.table.core.windows.net}
+    blob-endpoint: ${CP_AZURE_BLOB_ENDPOINT:https://safaudittest.blob.core.windows.net/}
+    download-url-minutes-valid: ${CP_DOWNLOAD_URL_MINS_VALID:30}
     fabric:
       base-url: ${CP_AZURE_FABRIC_BASE_URL:https://api.fabric.microsoft.com/}
       path: 'v1/workspaces/{WORKSPACE_ID}/items/{ITEM_ID}/jobs/Pipeline/instances'

@@ -37,7 +37,7 @@ public class AuditReportsServiceTest {
     @Test
     void test_getReports() {
 
-        underTest = new AuditReportsService(null, tableClient, mapper, null, null, null);
+        underTest = new AuditReportsService(null, tableClient, mapper, null, null, null, null, null);
 
         // Given
         when(tableClient.listEntities()).thenReturn(new PagedIterable<>(() -> tableEntities));

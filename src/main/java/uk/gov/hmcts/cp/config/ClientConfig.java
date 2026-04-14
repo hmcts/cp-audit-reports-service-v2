@@ -56,6 +56,17 @@ public class ClientConfig {
     }
 
     @Bean
+    public BlobServiceClient blobServiceClient(
+            final AzureProperties settings,
+            final TokenCredential azureCredential
+    ) {
+        return new BlobServiceClientBuilder().
+                endpoint(settings.blobEndpoint()).
+                credential(azureCredential).
+                buildClient();
+    }
+
+    @Bean
     public TableServiceClient tableServiceClient(
             final AzureProperties settings,
             final TokenCredential azureCredential
@@ -87,15 +98,5 @@ public class ClientConfig {
     @Bean
     public FabricProperties fabricProperties(final AzureProperties settings) {
         return settings.fabric();
-    }
-
-    @Bean
-    public BlobServiceClient blobServiceClient(final BlobServiceClientBuilder builder) {
-        return builder.endpoint("https://saauditreportstorage.table.core.windows.net").buildClient();
-    }
-
-    @Bean
-    public BlobServiceClientBuilder blobServiceClientBuilder() {
-        return new BlobServiceClientBuilder();
     }
 }

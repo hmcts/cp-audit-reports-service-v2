@@ -20,11 +20,13 @@ public class AzuriteCredential implements TokenCredential {
 
     @Override
     public AccessToken getTokenSync(TokenRequestContext request) {
-        return new AccessToken(jwt(), OffsetDateTime.MAX);
+        return new AccessToken(jwt(), OffsetDateTime.now().plusHours(1));
     }
 
     private static String jwt() {
         return Jwts.builder().
+                claim("oid", "oid").
+                claim("tid", "tid").
                 issuer("https://sts.windows-ppe.net").
                 setAudience("https://storage.azure.com").
                 issuedAt(Date.from(Instant.now())).

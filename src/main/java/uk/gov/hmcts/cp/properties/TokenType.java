@@ -14,7 +14,7 @@ public enum TokenType {
 
     private final Function<TokenCredential, Function<TokenRequestContext, AccessToken>> function;
 
-    private static final AccessToken TEST_TOKEN = new AccessToken("TEST", OffsetDateTime.MAX);
+    private static final AccessToken TEST_TOKEN = new AccessToken("TEST", OffsetDateTime.now().plusHours(1));
 
     TokenType(final Function<TokenCredential, Function<TokenRequestContext, AccessToken>> function) {
         this.function = function;

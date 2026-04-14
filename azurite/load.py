@@ -13,7 +13,7 @@ reportrequests.upsert_entity({
     "RowKey": "1234",
     "auditUserEmail": "audit@example.com",
     "auditReportReference": "2025-03-02-XxXXxX",
-    "downloadUrl": "http://localhost:8083/reports/report",
+    "downloadUrl": "https://azurite:10000/test/downloads/some/folder/example.html",
     "searchCriteria": "ALL_ACTIVITY",
     "pipelineJobId": "550e8400-e29b-41d4-a716-446655440000",
     "pipelineStatus": "PENDING"

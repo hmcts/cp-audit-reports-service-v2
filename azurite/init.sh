@@ -2,6 +2,6 @@
 
 az storage table create --name reportrequests
 
-# az group create --location uksouth --name downloads-group
+az storage container create --name downloads # --public-access blob
 
-# az container create --resource-group downloads-group --name downloads-container
+az storage blob upload --data "<HTML><BODY><P>Example HTML Page</P></BODY></HTML>" --container downloads --name some/folder/example.html --content-type text/html
