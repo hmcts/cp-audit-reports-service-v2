@@ -86,7 +86,7 @@ public record AuditReportsService(
             final OffsetDateTime keyStart = OffsetDateTime.now();
             final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
 
-            UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
+            final UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
             log.info("signedService from API: {}", key.getSignedService());
 
             if (!"b".equals(key.getSignedService())) {
