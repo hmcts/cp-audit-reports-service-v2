@@ -23,6 +23,9 @@ import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.utility.StreamUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -86,12 +89,23 @@ public record AuditReportsService(
                     new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r"))
             );
 
-            return downloadUrl + "?" + sasToken;
+            return String.format("%s?%s", downloadUrl, sasToken);
 
         } catch (Exception ex) {
 
-            log.warn("Failed to generate time limited downloadUrl", ex);
-            return downloadUrl;
+            try (var stackTrace = new ByteArrayOutputStream();
+                 var printStream = new PrintStream(stackTrace, true)) {
+
+                ex.printStackTrace(printStream);
+                log.warn("Failed to generate time limited downloadUrl: {} {}", ex.getMessage(), stackTrace);
+
+                return downloadUrl;
+
+            } catch (IOException err) {
+
+                log.warn("Failed to generate time limited downloadUrl and print stack trace: {}", err.getMessage());
+                return downloadUrl;
+            }
         }
     }
 
