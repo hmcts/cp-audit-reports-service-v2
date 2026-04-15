@@ -8,6 +8,7 @@ import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.BlobServiceVersion;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -61,6 +62,7 @@ public class ClientConfig {
             final TokenCredential azureCredential
     ) {
         return new BlobServiceClientBuilder().
+                serviceVersion(BlobServiceVersion.V2025_07_05).
                 endpoint(settings.blobEndpoint()).
                 credential(azureCredential).
                 buildClient();
