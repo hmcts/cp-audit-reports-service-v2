@@ -81,9 +81,12 @@ public record AuditReportsService(
 
             final BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(container);
             final BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
-
+                
             final OffsetDateTime keyStart = OffsetDateTime.now();
             final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
+
+            UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
+            log.info("signedService from API: {}", key.getSignedService());
 
             final String sasToken = blobClient.generateUserDelegationSas(
                     new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")),
