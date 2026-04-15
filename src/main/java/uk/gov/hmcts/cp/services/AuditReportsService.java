@@ -9,6 +9,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
+import com.azure.storage.blob.models.UserDelegationKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
@@ -81,12 +82,21 @@ public record AuditReportsService(
 
             final BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(container);
             final BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
-
+                
             final OffsetDateTime keyStart = OffsetDateTime.now();
             final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
 
-            final String sasToken = blobClient.generateSas(
-                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r"))
+            final UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
+            log.info("signedService from API: {}", key.getSignedService());
+
+            if (!"b".equals(key.getSignedService())) {
+                    log.warn("User delegation key '{}' is invalid for blob storage, overriding to 'b'", key.getSignedService());
+                    key.setSignedService("b");
+            }
+
+            final String sasToken = blobClient.generateUserDelegationSas(
+                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")),
+                    key
             );
 
             return String.format("%s?%s", downloadUrl, sasToken);
