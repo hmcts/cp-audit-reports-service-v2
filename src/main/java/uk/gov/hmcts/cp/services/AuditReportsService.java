@@ -75,7 +75,7 @@ public record AuditReportsService(
 
         try {
 
-            final List<String> segments = Arrays.stream(downloadUrl.replace(azure.blobEndpoint(), "").split("/")).toList();
+            final List<String> segments = Arrays.stream(downloadUrl.split("/")).skip(3).toList();
 
             final String container = segments.getFirst();
             final String blobName = Strings.join(segments.stream().skip(1).toList(), '/');
@@ -92,9 +92,7 @@ public record AuditReportsService(
             log.info("SAS inputs account={} container={} blob={} keyStart={} keyEnd={} nowUtc={}", blobServiceClient.getAccountName(), container, blobName, keyStart, keyEnd, OffsetDateTime.now(java.time.ZoneOffset.UTC));
 
             final String sasToken = blobClient.generateUserDelegationSas(
-                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")).
-                            setDelegatedUserObjectId(System.getenv("AZURE_CLIENT_ID")),
-                    key
+                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")), key
             );
 
             log.info("Generated SAS query string: {}", sasToken);
