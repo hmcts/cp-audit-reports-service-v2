@@ -41,7 +41,7 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
         var result = underTest.getUsersByIds("userId1,userId2");
 
         // Then
-        assertEquals("path?userIds=userId1,userId2", calledUri);
+        assertTrue(calledUris.contains("path?userIds=userId1,userId2"));
         assertSame(users.users(), result);
     }
 
@@ -57,7 +57,7 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
         var result = underTest.getUsersByEmails("email1,email2");
 
         // Then
-        assertEquals("path?emails=email1,email2", calledUri);
+        assertTrue(calledUris.contains("path?emails=email1,email2"));
         assertSame(users.users(), result);
     }
 

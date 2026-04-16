@@ -1,0 +1,16 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "GET",
+    "urlPath": "/system-id-mapper-api/rest/systemid/mappings/bulk"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/vnd.systemid.mappings+json"
+    },
+    "jsonBody": {
+      "systemIds": []
+    }
+  }
+}

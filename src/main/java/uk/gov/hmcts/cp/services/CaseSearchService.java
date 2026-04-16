@@ -8,14 +8,24 @@ import uk.gov.hmcts.cp.entities.output.Cases;
 import uk.gov.hmcts.cp.properties.ServiceProperties;
 import uk.gov.hmcts.cp.utility.RecordUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public record CaseSearchService(
         RestClient restClient,
         ServiceProperties settings
 ) {
+    private static final List<String> TARGET_TYPES = List.of(
+            "CASE_FILE_ID",
+            "caseId",
+            "CASE-ID",
+            "CASE_ID",
+            "CPS_CASE_ID"
+    );
+
     public List<Case> getCasesByIds(final String caseIds) {
 
         return getCases("targetIds", caseIds);
@@ -28,13 +38,16 @@ public record CaseSearchService(
 
     private List<Case> getCases(final String filter, final String value) {
 
-        return StringUtils.isNullOrEmpty(value) ?
-                List.of() :
-                RecordUtils.getRecordsWithParams(
+        final Function<String, List<Case>> getTargetRecords = targetType -> RecordUtils.
+                getRecordsWithParams(
                         restClient,
                         settings.cases(),
-                        Map.of(filter, value, "targetType", "CASE_ID"),
+                        Map.of(filter, value, "targetType", targetType),
                         Cases.class
                 ).systemIds();
+
+        return StringUtils.isNullOrEmpty(value) ?
+                List.of() :
+                TARGET_TYPES.stream().map(getTargetRecords).flatMap(Collection::stream).distinct().toList();
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -24,9 +26,7 @@ public abstract class SearchServiceTestBase<SearchService> {
     @Mock
     RestClient.RequestHeadersUriSpec<RestClient.RequestBodySpec> uriSpec;
 
-    UriBuilder uriBuilder = new DefaultUriBuilderFactory().builder();
-
-    String calledUri;
+    List<String> calledUris;
 
     SearchService underTest;
 
@@ -36,7 +36,7 @@ public abstract class SearchServiceTestBase<SearchService> {
     void setUp() {
 
         underTest = createSearchService();
-        calledUri = "";
+        calledUris = new ArrayList<>();
    }
 
     protected void setUpStubs() {
@@ -50,7 +50,7 @@ public abstract class SearchServiceTestBase<SearchService> {
         when(uriSpec.uri(ArgumentMatchers.<Function<UriBuilder, URI>>any())).thenAnswer(i -> {
 
             Function<UriBuilder, URI> uriFunction = i.getArgument(0);
-            calledUri = uriFunction.apply(uriBuilder).toString();
+            calledUris.add(uriFunction.apply(new DefaultUriBuilderFactory().builder()).toString());
 
             return uriSpec;
         });
