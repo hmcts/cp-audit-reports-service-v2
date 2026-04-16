@@ -88,17 +88,16 @@ public record AuditReportsService(
 
             final UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
 
-            log.info("signedService from API: {}", key.getSignedService());
-            if (!"b".equals(key.getSignedService())) {
-                log.warn("User delegation key '{}' is invalid for blob storage, overriding to 'b'", key.getSignedService());
-                key.setSignedService("b");
-            }
+            log.info("UDK signedService={} signedVersion={} signedOid={} signedTid={} signedStart={} signedExpiry={}", key.getSignedService(), key.getSignedVersion(), key.getSignedObjectId(), key.getSignedTenantId(), key.getSignedStart(), key.getSignedExpiry());
+            log.info("SAS inputs account={} container={} blob={} keyStart={} keyEnd={} nowUtc={}", blobServiceClient.getAccountName(), container, blobName, keyStart, keyEnd, OffsetDateTime.now(java.time.ZoneOffset.UTC));
 
             final String sasToken = blobClient.generateUserDelegationSas(
                     new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")).
                             setDelegatedUserObjectId(System.getenv("AZURE_CLIENT_ID")),
                     key
             );
+
+            log.info("Generated SAS query string: {}", sasToken);
 
             return String.format("%s?%s", downloadUrl, sasToken);
 
