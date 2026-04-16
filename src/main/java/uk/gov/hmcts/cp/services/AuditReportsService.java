@@ -87,15 +87,16 @@ public record AuditReportsService(
             final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
 
             final UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
-            log.info("signedService from API: {}", key.getSignedService());
 
+            log.info("signedService from API: {}", key.getSignedService());
             if (!"b".equals(key.getSignedService())) {
-                    log.warn("User delegation key '{}' is invalid for blob storage, overriding to 'b'", key.getSignedService());
-                    key.setSignedService("b");
+                log.warn("User delegation key '{}' is invalid for blob storage, overriding to 'b'", key.getSignedService());
+                key.setSignedService("b");
             }
 
             final String sasToken = blobClient.generateUserDelegationSas(
-                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")),
+                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")).
+                            setDelegatedUserObjectId(System.getenv("AZURE_CLIENT_ID")),
                     key
             );
 
