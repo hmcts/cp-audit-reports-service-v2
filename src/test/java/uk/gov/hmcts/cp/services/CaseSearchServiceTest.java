@@ -41,8 +41,12 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
         var result = underTest.getCasesByIds("caseId1,caseId2");
 
         // Then
-        assertEquals("path?targetIds=caseId1,caseId2&targetType=CASE_ID", calledUri);
-        assertSame(cases.systemIds(), result);
+        assertTrue(calledUris.contains("path?targetIds=caseId1,caseId2&targetType=CASE_FILE_ID"));
+        assertTrue(calledUris.contains("path?targetIds=caseId1,caseId2&targetType=caseId"));
+        assertTrue(calledUris.contains("path?targetIds=caseId1,caseId2&targetType=CASE-ID"));
+        assertTrue(calledUris.contains("path?targetIds=caseId1,caseId2&targetType=CASE_ID"));
+        assertTrue(calledUris.contains("path?targetIds=caseId1,caseId2&targetType=CPS_CASE_ID"));
+        assertEquals(cases.systemIds(), result);
     }
 
     @Test
@@ -57,8 +61,12 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
         var result = underTest.getCasesByUrns("caseUrn1,caseUrn2");
 
         // Then
-        assertEquals("path?targetType=CASE_ID&sourceIds=caseUrn1,caseUrn2", calledUri);
-        assertSame(cases.systemIds(), result);
+        assertTrue(calledUris.contains("path?targetType=CASE_FILE_ID&sourceIds=caseUrn1,caseUrn2"));
+        assertTrue(calledUris.contains("path?targetType=caseId&sourceIds=caseUrn1,caseUrn2"));
+        assertTrue(calledUris.contains("path?targetType=CASE-ID&sourceIds=caseUrn1,caseUrn2"));
+        assertTrue(calledUris.contains("path?targetType=CASE_ID&sourceIds=caseUrn1,caseUrn2"));
+        assertTrue(calledUris.contains("path?targetType=CPS_CASE_ID&sourceIds=caseUrn1,caseUrn2"));
+        assertEquals(cases.systemIds(), result);
     }
 
     @Test
