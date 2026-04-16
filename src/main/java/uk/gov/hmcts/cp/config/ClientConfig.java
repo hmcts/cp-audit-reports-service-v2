@@ -62,7 +62,6 @@ public class ClientConfig {
             final TokenCredential azureCredential
     ) {
         return new BlobServiceClientBuilder().
-                serviceVersion(BlobServiceVersion.V2025_07_05).
                 endpoint(settings.blobEndpoint()).
                 credential(azureCredential).
                 buildClient();
