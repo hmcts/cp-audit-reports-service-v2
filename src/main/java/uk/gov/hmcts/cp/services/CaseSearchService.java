@@ -18,6 +18,14 @@ public record CaseSearchService(
         RestClient restClient,
         ServiceProperties settings
 ) {
+    private static final List<String> TARGET_TYPES = List.of(
+            "CASE_FILE_ID",
+            "caseId",
+            "CASE-ID",
+            "CASE_ID",
+            "CPS_CASE_ID"
+    );
+
     public List<Case> getCasesByIds(final String caseIds) {
 
         return getCases("targetIds", caseIds);
@@ -27,14 +35,6 @@ public record CaseSearchService(
 
         return getCases("sourceIds", caseUrns);
     }
-
-    private static final List<String> TARGET_TYPES = List.of(
-            "CASE_FILE_ID",
-            "caseId",
-            "CASE-ID",
-            "CASE_ID",
-            "CPS_CASE_ID"
-    );
 
     private List<Case> getCases(final String filter, final String value) {
 
