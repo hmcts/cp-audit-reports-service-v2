@@ -11,6 +11,7 @@ public record AzureProperties(
         String tableName,
         String tableEndpoint,
         String blobEndpoint,
+        Integer segmentsToSkip,
         Integer downloadUrlMinutesValid,
         @NestedConfigurationProperty FabricProperties fabric
 ) { }
