@@ -25,7 +25,7 @@ class UserSearchServiceTest extends SearchServiceTestBase<UserSearchService> {
     @Override
     UserSearchService createSearchService() {
         return new UserSearchService(restClient, new ServiceProperties(
-                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null, 10, null),
+                "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null, 4, 10, null),
                 new ClientProperties("path", new MediaProperties("application", "json")), null, null));
     }
 
