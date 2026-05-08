@@ -74,8 +74,7 @@ public record AuditReportsService(
     private String toTimeLimitedUrl(final String downloadUrl) {
 
         try {
-
-            final List<String> segments = Arrays.stream(downloadUrl.split("/")).skip(3).toList();
+            final List<String> segments = Arrays.stream(downloadUrl.split("/")).skip(azure.segmentsToSkip()).toList();
 
             final String container = segments.getFirst();
             final String blobName = Strings.join(segments.stream().skip(1).toList(), '/');

@@ -75,6 +75,7 @@ service:
     table-name: ${CP_AZURE_TABLE_NAME:reportrequests}
     table-endpoint: ${CP_AZURE_TABLE_ENDPOINT:https://saauditreportstorage.table.core.windows.net}
     blob-endpoint: ${CP_AZURE_BLOB_ENDPOINT:https://safaudittest.blob.core.windows.net}
+    segments-to-skip: ${CP_SEGMENTS_TO_SKIP:3}
     download-url-minutes-valid: ${CP_DOWNLOAD_URL_MINS_VALID:30}
     fabric:
       base-url: ${CP_AZURE_FABRIC_BASE_URL:https://api.fabric.microsoft.com/}
