@@ -12,7 +12,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.cp'
-version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999'
+version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999-CPUAAP-19-SNAPSHOT'
 
 apply {
   from("$rootDir/gradle/dependencies/java-core.gradle")
