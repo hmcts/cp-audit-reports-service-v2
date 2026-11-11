@@ -11,5 +11,5 @@ public record ServiceProperties(
     @NestedConfigurationProperty ClientProperties users,
     @NestedConfigurationProperty ClientProperties cases,
     @NestedConfigurationProperty ClientProperties materials,
-    @NestedConfigurationProperty ClientProperties referralReasons
+    @NestedConfigurationProperty ClientProperties referralreasons
 ) { }

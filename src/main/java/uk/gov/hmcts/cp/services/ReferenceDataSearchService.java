@@ -24,7 +24,7 @@ public record ReferenceDataSearchService(
         return StringUtils.isNullOrEmpty(value) ?
                 List.of() :
                 RecordUtils.getRecords(
-                        restClient, settings.referralReasons(), filter, value, ReferralReasons.class
+                        restClient, settings.referralreasons(), filter, value, ReferralReasons.class
                 ).referralReasons();
     }
 }
