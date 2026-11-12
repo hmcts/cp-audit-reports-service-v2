@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - 'team/**'
   push:
     branches:
       - master
@@ -13,8 +14,11 @@ on:
 jobs:
   ci-draft:
     uses: ./.github/workflows/ci-build-publish.yml
+    permissions:
+      contents: read
+      packages: write
     secrets: inherit
     with:
-      is_publish: ${{ github.event_name == 'push' }}
+      is_publish: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && startsWith(github.base_ref, 'team/') && github.event.pull_request.head.repo.full_name == github.repository) }}
       trigger_docker: ${{ github.event_name == 'push' }}
       trigger_deploy: ${{ github.event_name == 'push' }}
