@@ -26,7 +26,7 @@ class CaseSearchServiceTest extends SearchServiceTestBase<CaseSearchService> {
     CaseSearchService createSearchService() {
         return new CaseSearchService(restClient, new ServiceProperties(
                 "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null, 4, 10, null), null,
-                new ClientProperties("path", new MediaProperties("application", "json")), null));
+                new ClientProperties("path", new MediaProperties("application", "json")), null,null));
     }
 
     @Test
