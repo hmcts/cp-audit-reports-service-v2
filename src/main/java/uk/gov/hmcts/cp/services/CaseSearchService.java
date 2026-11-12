@@ -38,7 +38,9 @@ public record CaseSearchService(
 
     private List<Case> getCases(final String filter, final String value) {
 
-        final Function<String, List<Case>> getTargetRecords = targetType -> RecordUtils.
+        final Function<String, List<Case>> getTargetRecords;
+
+        getTargetRecords = targetType -> RecordUtils.
                 getRecordsWithParams(
                         restClient,
                         settings.cases(),
