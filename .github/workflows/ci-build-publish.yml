@@ -28,7 +28,7 @@ jobs:
   Artefact-Version:
     runs-on: ubuntu-latest
     outputs:
-      artefact_version: ${{ inputs.is_release && steps.artefact.outputs.release_version || steps.artefact.outputs.draft_version }}
+      artefact_version: ${{ inputs.is_release && steps.artefact.outputs.release_version || (github.event_name == 'pull_request' && format('{0}-pr{1}.{2}.{3}', steps.artefact.outputs.draft_version, github.event.number, github.run_id, github.run_attempt)) || steps.artefact.outputs.draft_version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -118,6 +118,14 @@ jobs:
             -DGITHUB_TOKEN=$GITHUB_TOKEN \
             -DAZURE_DEVOPS_ARTIFACT_USERNAME=$AZURE_DEVOPS_ARTIFACT_USERNAME \
             -DAZURE_DEVOPS_ARTIFACT_TOKEN=$AZURE_DEVOPS_ARTIFACT_TOKEN
+
+      - name: Published artifact coordinates
+        if: ${{ inputs.is_publish }}
+        env:
+          ARTEFACT_VERSION: ${{ needs.Artefact-Version.outputs.artefact_version }}
+        run: |
+          printf 'Published Maven artifact: `uk.gov.hmcts.cp:cp-audit-reports-service-v2:%s`\n\n' "$ARTEFACT_VERSION" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Repositories: Azure Artifacts (hmcts-lib) and GitHub Packages.\n' >> "$GITHUB_STEP_SUMMARY"
 
   Build-Docker:
     needs: [ Provider-Deploy, Build, Artefact-Version ]
