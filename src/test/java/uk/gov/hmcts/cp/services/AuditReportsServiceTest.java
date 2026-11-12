@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
+import uk.gov.hmcts.cp.entities.output.Report;
 import uk.gov.hmcts.cp.properties.AzureProperties;
 
 import java.time.OffsetDateTime;
