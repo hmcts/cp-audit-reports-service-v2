@@ -2,6 +2,7 @@ package uk.gov.hmcts.cp.services;
 
 import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenRequestContext;
+import com.azure.core.exception.AzureException;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.models.TableEntity;
 import com.azure.storage.blob.BlobClient;
@@ -24,14 +25,12 @@ import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.utility.StreamUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -41,7 +40,8 @@ import static java.util.function.Predicate.not;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static uk.gov.hmcts.cp.entities.output.ReportResult.toResult;
-import static uk.gov.hmcts.cp.utility.MapUtils.*;
+import static uk.gov.hmcts.cp.utility.MapUtils.toObjectUnaryOperator;
+import static uk.gov.hmcts.cp.utility.MapUtils.transformValues;
 import static uk.gov.hmcts.cp.utility.StreamUtils.split;
 
 @Slf4j
@@ -72,48 +72,44 @@ public record AuditReportsService(
     }
 
     private String toTimeLimitedUrl(final String downloadUrl) {
+        String timeLimitedUrl;
 
         try {
-            final List<String> segments = Arrays.stream(downloadUrl.split("/")).skip(azure.segmentsToSkip()).toList();
+            final List<String> segments;
+            final String container;
+            final String blobName;
+            final BlobContainerClient blobContainerClient;
+            final BlobClient blobClient;
+            final OffsetDateTime keyStart;
+            final OffsetDateTime keyEnd;
+            final UserDelegationKey key;
+            final String sasToken;
 
-            final String container = segments.getFirst();
-            final String blobName = Strings.join(segments.stream().skip(1).toList(), '/');
+            segments = Arrays.stream(downloadUrl.split("/")).skip(azure.segmentsToSkip()).toList();
+            container = segments.getFirst();
+            blobName = Strings.join(segments.stream().skip(1).toList(), '/');
 
-            final BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(container);
-            final BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
+            blobContainerClient = blobServiceClient.getBlobContainerClient(container);
+            blobClient = blobContainerClient.getBlobClient(blobName);
                 
-            final OffsetDateTime keyStart = OffsetDateTime.now();
-            final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
+            keyStart = OffsetDateTime.now();
+            keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
 
-            final UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
+            key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
 
             log.info("UDK signedService={} signedVersion={} signedOid={} signedTid={} signedStart={} signedExpiry={}", key.getSignedService(), key.getSignedVersion(), key.getSignedObjectId(), key.getSignedTenantId(), key.getSignedStart(), key.getSignedExpiry());
             log.info("SAS inputs account={} container={} blob={} keyStart={} keyEnd={} nowUtc={}", blobServiceClient.getAccountName(), container, blobName, keyStart, keyEnd, OffsetDateTime.now(java.time.ZoneOffset.UTC));
 
-            final String sasToken = blobClient.generateUserDelegationSas(
+            sasToken = blobClient.generateUserDelegationSas(
                     new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")), key
             );
 
-            log.info("Generated SAS query string: {}", sasToken);
-
-            return String.format("%s?%s", downloadUrl, sasToken);
-
-        } catch (Exception ex) {
-
-            try (var stackTrace = new ByteArrayOutputStream();
-                 var printStream = new PrintStream(stackTrace, true)) {
-
-                ex.printStackTrace(printStream);
-                log.warn("Failed to generate time limited downloadUrl: {} {}", ex.getMessage(), stackTrace);
-
-                return downloadUrl;
-
-            } catch (IOException err) {
-
-                log.warn("Failed to generate time limited downloadUrl and print stack trace: {}", err.getMessage());
-                return downloadUrl;
-            }
+            timeLimitedUrl = String.format("%s?%s", downloadUrl, sasToken);
+        } catch (AzureException | IllegalArgumentException | IllegalStateException | NoSuchElementException ex) {
+            log.warn("Failed to generate time limited downloadUrl", ex);
+            timeLimitedUrl = downloadUrl;
         }
+        return timeLimitedUrl;
     }
 
     @SuppressWarnings("PMD")

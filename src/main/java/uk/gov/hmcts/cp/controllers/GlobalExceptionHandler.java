@@ -24,7 +24,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResponseStatusException(
             final ResponseStatusException responseStatusException) {
 
-        final ErrorResponse error = ErrorResponse.builder()
+        final ErrorResponse error;
+
+        error = ErrorResponse.builder()
                 .error(String.valueOf(responseStatusException.getStatusCode().value()))
                 .message(Optional.ofNullable(responseStatusException.getReason()).
                         orElseGet(responseStatusException::getMessage))

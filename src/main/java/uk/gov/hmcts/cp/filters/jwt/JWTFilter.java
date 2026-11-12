@@ -39,7 +39,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
-        final String jwt = request.getHeader(JWT_TOKEN_HEADER);
+        final String jwt;
+
+        jwt = request.getHeader(JWT_TOKEN_HEADER);
 
         if (jwt == null) {
             log.error("JWTFilter expected header {} not passed", JWT_TOKEN_HEADER);
@@ -47,9 +49,11 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         try {
-            final AuthDetails extractedToken = jwtService.extract(jwt);
+            final AuthDetails extractedToken;
+            final AuthDetails requestScopedToken;
 
-            final AuthDetails requestScopedToken = jwtProvider.getObject(); // current request instance
+            extractedToken = jwtService.extract(jwt);
+            requestScopedToken = jwtProvider.getObject(); // current request instance
             requestScopedToken.setUserName(extractedToken.getUserName());
             requestScopedToken.setScope(extractedToken.getScope());
         } catch (InvalidJWTException e) {
@@ -61,8 +65,10 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) {
+        boolean shouldNotFilter;
+
         // Skip filtering entirely when disabled, and for specific paths
-        boolean shouldNotFilter = true;
+        shouldNotFilter = true;
         if (jwFilterEnabled) {
             log.atInfo().log("JWT Filter is enabled");
             shouldNotFilter = Stream.of("/health")
