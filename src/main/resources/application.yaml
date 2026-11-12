@@ -97,6 +97,11 @@ service:
     media:
       type: 'application'
       sub-type: 'vnd.progression.query.material-bulk+json'
+  referralreasons:
+    path: 'referencedata-query-api/query/api/rest/referencedata/referral-reasons'
+    media:
+      type: 'application'
+      sub-type: 'vnd.reference-data.referral-reasons+json'
 
 logging:
   level:

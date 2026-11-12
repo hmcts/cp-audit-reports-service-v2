@@ -31,7 +31,7 @@ class MaterialSearchServiceTest extends SearchServiceTestBase<MaterialSearchServ
     MaterialSearchService createSearchService() {
         return new MaterialSearchService(restClient, new ServiceProperties(
                 "", "", new AzureProperties(List.of("test"), TEST, AZURE, null, null, null, 4, 10, null), null, null,
-                new ClientProperties("path", new MediaProperties("application", "json"))));
+                new ClientProperties("path", new MediaProperties("application", "json")),null));
     }
 
     @Test

@@ -12,7 +12,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.cp'
-version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999'
+version = System.getProperty('ARTEFACT_VERSION') ?: '0.0.999-CPUAAP-19-SNAPSHOT'
 
 apply {
   from("$rootDir/gradle/dependencies/java-core.gradle")
@@ -52,7 +52,7 @@ dependencies {
   implementation 'com.azure:azure-storage-blob'
 
   implementation 'uk.gov.hmcts.cp:cp-auth-rules-filter:1.0.7'
-  implementation 'uk.gov.hmcts.cp:api-cp-audit-reports:0.0.0-b98c87f'
+  implementation 'uk.gov.hmcts.cp:api-cp-audit-reports:0.0.999-CPUAAP-19-SNAPSHOT'
 
   // --- Observability / Actuator / OTEL / Prometheus ---
   implementation 'org.springframework.boot:spring-boot-starter-actuator:4.0.3'
