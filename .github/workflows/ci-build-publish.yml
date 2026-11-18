@@ -23,12 +23,20 @@ on:
       trigger_deploy:
         required: true
         type: boolean
+      promote_to_live:
+        required: false
+        type: boolean
+        default: true
+      source_ref:
+        required: false
+        type: string
+        default: ''
 
 jobs:
   Artefact-Version:
     runs-on: ubuntu-latest
     outputs:
-      artefact_version: ${{ inputs.is_release && steps.artefact.outputs.release_version || steps.artefact.outputs.draft_version }}
+      artefact_version: ${{ inputs.is_release && steps.artefact.outputs.release_version || (github.event_name == 'pull_request' && format('{0}-pr{1}.{2}.{3}', steps.artefact.outputs.draft_version, github.event.number, github.run_id, github.run_attempt)) || format('{0}-ci{1}.{2}', steps.artefact.outputs.draft_version, github.run_id, github.run_attempt) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -101,23 +109,23 @@ jobs:
           AZURE_DEVOPS_ARTIFACT_USERNAME: ${{ secrets.AZURE_DEVOPS_ARTIFACT_USERNAME }}
           AZURE_DEVOPS_ARTIFACT_TOKEN: ${{ secrets.AZURE_DEVOPS_ARTIFACT_TOKEN }}
         run: |
-          if [ -z "AZURE_DEVOPS_ARTIFACT_USERNAME" ]; then
-            echo "::warning::AZURE_DEVOPS_ARTIFACT_USERNAME is null or not set"
-          fi
-
-          if [ -z "$AZURE_DEVOPS_ARTIFACT_TOKEN" ]; then
-            echo "::warning::AZURE_DEVOPS_ARTIFACT_TOKEN is null or not set"
-          fi
+          : "${AZURE_DEVOPS_ARTIFACT_USERNAME:?Missing Azure Artifacts publishing username}"
+          : "${AZURE_DEVOPS_ARTIFACT_TOKEN:?Missing Azure Artifacts publishing token}"
 
           echo "Publishing artefact for version: $ARTEFACT_VERSION"
           
           ./gradlew publish \
             -DARTEFACT_VERSION=$ARTEFACT_VERSION \
             -DGITHUB_REPOSITORY=${{ github.repository }} \
-            -DGITHUB_ACTOR=${{ github.actor }} \
-            -DGITHUB_TOKEN=$GITHUB_TOKEN \
-            -DAZURE_DEVOPS_ARTIFACT_USERNAME=$AZURE_DEVOPS_ARTIFACT_USERNAME \
-            -DAZURE_DEVOPS_ARTIFACT_TOKEN=$AZURE_DEVOPS_ARTIFACT_TOKEN
+            -DGITHUB_ACTOR=${{ github.actor }}
+
+      - name: Published artifact coordinates
+        if: ${{ inputs.is_publish }}
+        env:
+          ARTEFACT_VERSION: ${{ needs.Artefact-Version.outputs.artefact_version }}
+        run: |
+          printf 'Published Maven artifact: `uk.gov.hmcts.cp:cp-audit-reports-service-v2:%s`\n\n' "$ARTEFACT_VERSION" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Repositories: Azure Artifacts (hmcts-lib) and GitHub Packages. ACR image publication is a separate downstream job.\n' >> "$GITHUB_STEP_SUMMARY"
 
   Build-Docker:
     needs: [ Provider-Deploy, Build, Artefact-Version ]
@@ -155,6 +163,7 @@ jobs:
             JAR_FILENAME=${{ needs.Build.outputs.artefact_name }}.jar
 
   Deploy:
+    name: Publish image to ACR (no application deployment)
     needs: [ Provider-Deploy, Build, Artefact-Version ]
     if: ${{ inputs.trigger_deploy }}
     runs-on: ubuntu-latest
@@ -174,5 +183,7 @@ jobs:
               "ARTIFACT_VERSION": "${{ needs.Artefact-Version.outputs.artefact_version }}",
               "TARGET_REPOSITORY": "${{ github.repository }}",
               "agentDemand": "ubuntu-j25",
-              "baseImage": "hmcts/apm-services:25-jre"
+              "baseImage": "hmcts/apm-services:25-jre",
+              "gitRef": "${{ inputs.source_ref }}",
+              "pushToLive": ${{ inputs.promote_to_live }}
             }
