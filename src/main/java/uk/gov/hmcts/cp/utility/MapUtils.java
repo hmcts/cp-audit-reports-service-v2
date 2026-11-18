@@ -9,7 +9,9 @@ public interface MapUtils {
 
     static UnaryOperator<Map<String, Object>> transformValues(final Map<String, UnaryOperator<Object>> transformers) {
 
-        final Function<String, UnaryOperator<Object>> transformer = key ->
+        final Function<String, UnaryOperator<Object>> transformer;
+
+        transformer = key ->
                 transformers.getOrDefault(key, UnaryOperator.identity());
 
         return map -> map.entrySet().stream().collect(Collectors.toMap(

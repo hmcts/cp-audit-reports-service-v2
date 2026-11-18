@@ -4,14 +4,8 @@ import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.models.TableEntity;
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.sas.BlobSasPermission;
-import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
-import com.azure.storage.blob.models.UserDelegationKey;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -24,24 +18,18 @@ import uk.gov.hmcts.cp.properties.AzureProperties;
 import uk.gov.hmcts.cp.properties.FabricProperties;
 import uk.gov.hmcts.cp.utility.StreamUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Arrays;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static uk.gov.hmcts.cp.entities.output.ReportResult.toResult;
-import static uk.gov.hmcts.cp.utility.MapUtils.*;
 import static uk.gov.hmcts.cp.utility.StreamUtils.split;
 
 @Slf4j
@@ -57,63 +45,12 @@ public record AuditReportsService(
         Function<TokenRequestContext, AccessToken> azureAccess
 ) {
     public List<Report> getReports() {
-
-        return reportRequests.
-                listEntities().
-                mapPage(TableEntity::getProperties).
-                mapPage(transformValues(propertyTransformers())).
-                mapPage(Report.fromMap(objectMapper)).
-                stream().
-                toList();
-    }
-
-    private Map<String, UnaryOperator<Object>> propertyTransformers() {
-        return Map.of("downloadUrl", toObjectUnaryOperator(this::toTimeLimitedUrl));
-    }
-
-    private String toTimeLimitedUrl(final String downloadUrl) {
-
-        try {
-            final List<String> segments = Arrays.stream(downloadUrl.split("/")).skip(azure.segmentsToSkip()).toList();
-
-            final String container = segments.getFirst();
-            final String blobName = Strings.join(segments.stream().skip(1).toList(), '/');
-
-            final BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(container);
-            final BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
-                
-            final OffsetDateTime keyStart = OffsetDateTime.now();
-            final OffsetDateTime keyEnd = keyStart.plusMinutes(azure.downloadUrlMinutesValid());
-
-            final UserDelegationKey key = blobServiceClient.getUserDelegationKey(keyStart, keyEnd);
-
-            log.info("UDK signedService={} signedVersion={} signedOid={} signedTid={} signedStart={} signedExpiry={}", key.getSignedService(), key.getSignedVersion(), key.getSignedObjectId(), key.getSignedTenantId(), key.getSignedStart(), key.getSignedExpiry());
-            log.info("SAS inputs account={} container={} blob={} keyStart={} keyEnd={} nowUtc={}", blobServiceClient.getAccountName(), container, blobName, keyStart, keyEnd, OffsetDateTime.now(java.time.ZoneOffset.UTC));
-
-            final String sasToken = blobClient.generateUserDelegationSas(
-                    new BlobServiceSasSignatureValues(keyEnd, BlobSasPermission.parse("r")), key
-            );
-
-            log.info("Generated SAS query string: {}", sasToken);
-
-            return String.format("%s?%s", downloadUrl, sasToken);
-
-        } catch (Exception ex) {
-
-            try (var stackTrace = new ByteArrayOutputStream();
-                 var printStream = new PrintStream(stackTrace, true)) {
-
-                ex.printStackTrace(printStream);
-                log.warn("Failed to generate time limited downloadUrl: {} {}", ex.getMessage(), stackTrace);
-
-                return downloadUrl;
-
-            } catch (IOException err) {
-
-                log.warn("Failed to generate time limited downloadUrl and print stack trace: {}", err.getMessage());
-                return downloadUrl;
-            }
-        }
+        final ReportListing listing = new ReportListing(azure, blobServiceClient);
+        return reportRequests.listEntities().stream()
+                .sorted(ReportListing.NEWEST_FIRST)
+                .map(listing::safeProperties)
+                .map(Report.fromMap(objectMapper))
+                .toList();
     }
 
     @SuppressWarnings("PMD")
@@ -124,8 +61,9 @@ public record AuditReportsService(
                     reportRequest, new TypeReference<>() {}
             );
 
-            props.put("downloadUrl", "http://localhost");
+            props.put("downloadUrl", "");
             props.put("pipelineStatus", "PENDING");
+            props.put(ReportListing.SUBMITTED_AT, Instant.now().toString());
 
             reportRequests.createEntity(
                     new TableEntity("1", reportRequest.auditReportReference()).setProperties(props)

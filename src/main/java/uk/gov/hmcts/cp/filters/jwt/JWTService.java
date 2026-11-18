@@ -32,13 +32,17 @@ public class JWTService {
 
     public AuthDetails extract(final String token) throws InvalidJWTException {
         try {
-            final Claims claims = Jwts.parser()
+            final Claims claims;
+            final String userName;
+            final String scope;
+
+            claims = Jwts.parser()
                     .verifyWith(getSecretSigningKey())
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-            final String userName = claims.getSubject();
-            final String scope = claims.get(SCOPE).toString();
+            userName = claims.getSubject();
+            scope = claims.get(SCOPE).toString();
             return new AuthDetails(userName, scope);
         } catch (SignatureException ex) {
             log.error("Invalid signature/claims", ex);
@@ -69,7 +73,9 @@ public class JWTService {
     }
 
     private SecretKey getSecretSigningKey() {
-        final byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
+        final byte[] keyBytes;
+
+        keyBytes = Decoders.BASE64URL.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

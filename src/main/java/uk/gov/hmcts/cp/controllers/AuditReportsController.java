@@ -19,10 +19,13 @@ import uk.gov.hmcts.cp.openapi.model.AuditReportRequest;
 import uk.gov.hmcts.cp.openapi.model.GetReportListing200Response;
 import uk.gov.hmcts.cp.openapi.model.PostReportRequest202Response;
 import uk.gov.hmcts.cp.services.AuditReportsService;
+import uk.gov.hmcts.cp.utility.HearingId;
 import uk.gov.hmcts.cp.utility.ResponseUtils;
 
 import java.util.Optional;
 import java.util.function.Function;
+
+import static uk.gov.hmcts.cp.openapi.model.AuditReportRequest.SearchCriteriaEnum.HEARING;
 
 @Slf4j
 @RestController
@@ -59,6 +62,8 @@ public class AuditReportsController
         log.info("postReportRequest");
 
         return getHeader("CJSCPPUID").
+                filter(ignored -> !HEARING.equals(auditReportRequest.getSearchCriteria())
+                        || HearingId.isValid(auditReportRequest.getHearingId())).
                 flatMap(cjsCppUid -> convertRequest(auditReportRequest, cjsCppUid)).
                 map(reportRequest -> service.
                         requestReport(reportRequest).
