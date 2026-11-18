@@ -10,5 +10,6 @@ public record ServiceProperties(
     @NestedConfigurationProperty AzureProperties azure,
     @NestedConfigurationProperty ClientProperties users,
     @NestedConfigurationProperty ClientProperties cases,
-    @NestedConfigurationProperty ClientProperties materials
+    @NestedConfigurationProperty ClientProperties materials,
+    @NestedConfigurationProperty ClientProperties referralreasons
 ) { }
