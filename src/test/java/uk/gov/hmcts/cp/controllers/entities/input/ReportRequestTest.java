@@ -24,7 +24,9 @@ public class ReportRequestTest {
             "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,CASE,,,,",
             "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,MATERIAL,,,678,",
             "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,MATERIAL,,,,",
-            "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,xyz",
+            "true,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,ef39b662-bcc7-4a2d-9be7-6509e0fb1dad",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,2026-04-14-XHdRnD",
+            "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,1-1-1-1-1",
             "false,audit123,audit@example.com,auditReportReference,2024-02-01,2024-04-02,true,john,john@smith.com,HEARING,,,,",
     })
     void validateReportRequest(

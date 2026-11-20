@@ -13,5 +13,6 @@ public record AzureProperties(
         String blobEndpoint,
         Integer segmentsToSkip,
         Integer downloadUrlMinutesValid,
-        @NestedConfigurationProperty FabricProperties fabric
+        @NestedConfigurationProperty FabricProperties fabric,
+        boolean pseudonymisedDownloadsOnly
 ) { }
