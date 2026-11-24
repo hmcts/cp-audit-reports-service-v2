@@ -1,12 +1,18 @@
 package uk.gov.hmcts.cp.services;
 
 import com.azure.core.credential.AccessToken;
+import com.azure.core.credential.AzureNamedKeyCredential;
 import com.azure.core.credential.TokenRequestContext;
+import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpHeaderName;
 import com.azure.core.http.HttpHeaders;
+import com.azure.core.http.HttpRequest;
+import com.azure.core.http.HttpResponse;
 import com.azure.core.http.rest.SimpleResponse;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableClientBuilder;
 import com.azure.data.tables.models.TableEntity;
 import com.azure.data.tables.models.TableEntityUpdateMode;
 import org.junit.jupiter.api.Test;
@@ -21,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
+import reactor.core.publisher.Mono;
 import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.cp.entities.input.ReportRequest;
 import uk.gov.hmcts.cp.entities.output.ReportResult;
@@ -29,6 +36,8 @@ import uk.gov.hmcts.cp.properties.FabricProperties;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -88,6 +98,46 @@ class AuditReportDispatchTest {
 
         server.verify();
         assertFailedUpdate();
+    }
+
+    @Test
+    void sendsIntactWeakEtagWhenFabricReturns404() {
+        final List<HttpRequest> sent = new ArrayList<>();
+        final HttpClient transport = request -> {
+            sent.add(request);
+            final HttpResponse response = mock(HttpResponse.class);
+            final HttpHeaders headers = new HttpHeaders();
+            if (request.getHttpMethod() == com.azure.core.http.HttpMethod.POST) {
+                headers.set(HttpHeaderName.ETAG, ETAG);
+                when(response.getBodyAsBinaryData()).thenReturn(BinaryData.fromBytes(new byte[0]));
+            }
+            when(response.getRequest()).thenReturn(request);
+            when(response.getHeaders()).thenReturn(headers);
+            when(response.getStatusCode()).thenReturn(204);
+            return Mono.just(response);
+        };
+        final TableClient realTable = new TableClientBuilder().tableName("reportrequests")
+                .endpoint("https://synthetic.table.core.windows.net")
+                .credential(new AzureNamedKeyCredential("synthetic", "c3ludGhldGlj"))
+                .httpClient(transport).buildClient();
+        final RestClient.Builder builder = RestClient.builder();
+        final MockRestServiceServer fabricServer = MockRestServiceServer.bindTo(builder).build();
+        fabricServer.expect(method(HttpMethod.POST)).andRespond(withStatus(HttpStatus.NOT_FOUND));
+        final JsonMapper mapper = JsonMapper.builder().build();
+        final AuditReportsService actual = new AuditReportsService(builder.build(), realTable, mapper, null, FABRIC,
+                new TokenRequestContext(), null,
+                ignored -> new AccessToken("synthetic-token", OffsetDateTime.now().plusMinutes(10)));
+
+        assertTrue(actual.requestReport(REQUEST).isEmpty());
+
+        fabricServer.verify();
+        assertEquals(2, sent.size());
+        final HttpRequest merge = sent.getLast();
+        assertEquals("PATCH", merge.getHttpMethod().name());
+        assertEquals(ETAG, merge.getHeaders().getValue(HttpHeaderName.IF_MATCH));
+        final var body = mapper.readTree(merge.getBodyAsBinaryData().toString());
+        assertEquals("FAILED", body.path("pipelineStatus").asString());
+        assertEquals("", body.path("downloadUrl").asString());
     }
 
     @ParameterizedTest

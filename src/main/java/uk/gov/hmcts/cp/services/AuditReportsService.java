@@ -7,6 +7,7 @@ import com.azure.core.util.Context;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.models.TableEntity;
 import com.azure.data.tables.models.TableEntityUpdateMode;
+import com.azure.data.tables.models.TableServiceException;
 import com.azure.storage.blob.BlobServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -147,7 +148,10 @@ public record AuditReportsService(
         props.put(ReportListing.SUBMITTED_AT, Instant.now().toString());
 
         final TableEntity row = new TableEntity(PARTITION, reportRequest.auditReportReference()).setProperties(props);
-        return reportRequests.createEntityWithResponse(row, null, Context.NONE).getHeaders().getValue(HttpHeaderName.ETAG);
+        final String etag = reportRequests.createEntityWithResponse(row, null, Context.NONE)
+                .getHeaders().getValue(HttpHeaderName.ETAG);
+        // Azure Tables' TableScrubEtagPolicy drops the closing quote from weak ETags.
+        return etag != null && etag.startsWith("W/\"") && !etag.endsWith("\"") ? etag + "\"" : etag;
     }
 
     private ResponseEntity<Void> submitToFabric(final ReportRequest reportRequest, final String token) {
@@ -179,6 +183,9 @@ public record AuditReportsService(
                 .addProperty("downloadUrl", "");
         try {
             reportRequests.updateEntityWithResponse(failed, TableEntityUpdateMode.MERGE, true, null, Context.NONE);
+        } catch (TableServiceException ex) {
+            log.warn("Could not conditionally mark audit request {} failed: storage HTTP {}",
+                    reference, ex.getResponse().getStatusCode());
         } catch (RuntimeException ex) {
             log.warn("Could not conditionally mark audit request {} failed: {}", reference, ex.getClass().getSimpleName());
         }
