@@ -30,8 +30,6 @@ class ControllersIntegrationTest extends IntegrationTestBase {
     private static final String BUNDLE_ROUTE = "/reports/bundle";
     private static final Map<String, String> CREATE_AUDIT =
             Map.of("object", "Crime Platform Audit", "action", "create");
-    private static final Map<String, String> DOWNLOAD_KEY =
-            Map.of("object", "Crime Platform Audit Identity Key", "action", "download");
 
     @MockitoBean
     CaseSearchService caseSearchService;
@@ -47,17 +45,17 @@ class ControllersIntegrationTest extends IntegrationTestBase {
 
     @BeforeEach
     void setUp() {
-        stubAuditorPermissions(List.of());
+        stubPermissions("Auditors", List.of());
     }
 
-    private void stubAuditorPermissions(final List<Map<String, String>> permissions) {
+    private void stubPermissions(final String groupName, final List<Map<String, String>> permissions) {
         stubFor(WireMock.get("/usersgroups-query-api/query/api/rest/usersgroups/users/logged-in-user/permissions").
                 willReturn(okForContentType(
                         "application/vnd.usersgroups.get-logged-in-user-permissions+json",
                         new ObjectMapper().writeValueAsString(Map.of(
                                 "groups", List.of(Map.of(
                                         "groupId", "123",
-                                        "groupName", "Auditors",
+                                        "groupName", groupName,
                                         "prosecutingAuthority", "CPS"
                                 )),
                                 "switchableRoles", List.of(),
@@ -68,8 +66,7 @@ class ControllersIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void bundleRequiresPermissionBeyondNormalAuditAccess() throws Exception {
-        stubAuditorPermissions(List.of(CREATE_AUDIT));
+    void auditorWithoutAuditPermissionCannotDownloadBundle() throws Exception {
 
         mockMvc.perform(get(BUNDLE_ROUTE).param("reference", BUNDLE_REFERENCE).header("CJSCPPUID", "someId"))
                 .andExpect(status().isForbidden());
@@ -77,8 +74,17 @@ class ControllersIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void approvedAuditorCanDownloadBothWorkbooksAsOnePrivateAttachment() throws Exception {
-        stubAuditorPermissions(List.of(CREATE_AUDIT, DOWNLOAD_KEY));
+    void nonAuditorWithAuditPermissionCannotDownloadBundle() throws Exception {
+        stubPermissions("Crown Prosecutors", List.of(CREATE_AUDIT));
+
+        mockMvc.perform(get(BUNDLE_ROUTE).param("reference", BUNDLE_REFERENCE).header("CJSCPPUID", "someId"))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(reportBundleService);
+    }
+
+    @Test
+    void standardAuditorCanDownloadBothWorkbooksAsOnePrivateAttachment() throws Exception {
+        stubPermissions("Auditors", List.of(CREATE_AUDIT));
         final byte[] archive = {1, 2, 3};
         when(reportBundleService.download(BUNDLE_REFERENCE)).thenReturn(archive);
 
