@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
@@ -158,5 +159,14 @@ public class AuditReportsControllerTest {
         when(userService.getUsersByIds(audit.userId())).thenReturn(List.of(audit));
 
         headers.put("CJSCPPUID", "audit");
+    }
+
+    @Test
+    void test_malformed_hearing_is_rejected_before_lookup_or_persistence() {
+        headers.put("CJSCPPUID", "audit");
+        final var request = createMinimalReportRequest().hearingId("2026-04-14-XHdRnD");
+
+        assertEquals(BAD_REQUEST, underTest.postReportRequest(request).getStatusCode());
+        verifyNoInteractions(caseService, userService, reportsService);
     }
 }

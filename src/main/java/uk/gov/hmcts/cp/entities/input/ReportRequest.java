@@ -1,6 +1,7 @@
 package uk.gov.hmcts.cp.entities.input;
 
 import io.opentelemetry.api.internal.StringUtils;
+import uk.gov.hmcts.cp.utility.HearingId;
 
 import java.util.stream.Stream;
 
@@ -28,7 +29,7 @@ public record ReportRequest(
                 switch (searchCriteria) {
                     case "CASE" -> StringUtils.isNullOrEmpty(caseUrn);
                     case "MATERIAL" -> StringUtils.isNullOrEmpty(materialIds);
-                    case "HEARING" -> StringUtils.isNullOrEmpty(hearingId);
+                    case "HEARING" -> !HearingId.isValid(hearingId);
                     case "ALL_ACTIVITY" -> allUsers;
                     default -> true;
         }) {
