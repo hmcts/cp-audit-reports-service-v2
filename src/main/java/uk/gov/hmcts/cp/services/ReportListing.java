@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 record ReportListing(AzureProperties azure, BlobServiceClient blobServiceClient) {
     /* default */ static final String SUBMITTED_AT = "submittedAt";
     private static final String DOWNLOAD_URL = "downloadUrl";
-    private static final String CIRCULATION_CONTAINER = "generatedreports";
+    /* default */ static final String CIRCULATION_CONTAINER = "generatedreports";
     private static final Pattern BLOB_PATH = Pattern.compile("[A-Za-z0-9_./-]+");
     /* default */ static final Comparator<TableEntity> NEWEST_FIRST =
             Comparator.comparing(ReportListing::submissionTime).reversed().thenComparing(TableEntity::getRowKey);
