@@ -8,19 +8,30 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.cp.services.CaseSearchService;
 import uk.gov.hmcts.cp.services.MaterialSearchService;
+import uk.gov.hmcts.cp.services.ReportBundleService;
 import uk.gov.hmcts.cp.services.UserSearchService;
 
 import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WireMockTest(httpPort = 8080)
 class ControllersIntegrationTest extends IntegrationTestBase {
+    private static final String BUNDLE_REFERENCE = "20261127-abc123";
+    private static final String BUNDLE_ROUTE = "/reports/bundle";
+    private static final Map<String, String> CREATE_AUDIT =
+            Map.of("object", "Crime Platform Audit", "action", "create");
+    private static final Map<String, String> DOWNLOAD_KEY =
+            Map.of("object", "Crime Platform Audit Identity Key", "action", "download");
 
     @MockitoBean
     CaseSearchService caseSearchService;
@@ -31,8 +42,15 @@ class ControllersIntegrationTest extends IntegrationTestBase {
     @MockitoBean
     MaterialSearchService materialSearchService;
 
+    @MockitoBean
+    ReportBundleService reportBundleService;
+
     @BeforeEach
     void setUp() {
+        stubAuditorPermissions(List.of());
+    }
+
+    private void stubAuditorPermissions(final List<Map<String, String>> permissions) {
         stubFor(WireMock.get("/usersgroups-query-api/query/api/rest/usersgroups/users/logged-in-user/permissions").
                 willReturn(okForContentType(
                         "application/vnd.usersgroups.get-logged-in-user-permissions+json",
@@ -43,10 +61,35 @@ class ControllersIntegrationTest extends IntegrationTestBase {
                                         "prosecutingAuthority", "CPS"
                                 )),
                                 "switchableRoles", List.of(),
-                                "permissions", List.of(Map.of())
+                                "permissions", permissions
                         ))
                 ))
         );
+    }
+
+    @Test
+    void bundleRequiresPermissionBeyondNormalAuditAccess() throws Exception {
+        stubAuditorPermissions(List.of(CREATE_AUDIT));
+
+        mockMvc.perform(get(BUNDLE_ROUTE).param("reference", BUNDLE_REFERENCE).header("CJSCPPUID", "someId"))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(reportBundleService);
+    }
+
+    @Test
+    void approvedAuditorCanDownloadBothWorkbooksAsOnePrivateAttachment() throws Exception {
+        stubAuditorPermissions(List.of(CREATE_AUDIT, DOWNLOAD_KEY));
+        final byte[] archive = {1, 2, 3};
+        when(reportBundleService.download(BUNDLE_REFERENCE)).thenReturn(archive);
+
+        mockMvc.perform(get(BUNDLE_ROUTE).param("reference", BUNDLE_REFERENCE)
+                        .header("CJSCPPUID", "someId").accept("application/zip"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/zip"))
+                .andExpect(content().bytes(archive))
+                .andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(header().string("Content-Disposition",
+                        "attachment; filename=\"audit-report-" + BUNDLE_REFERENCE + "-workbooks.zip\""));
     }
 
     @Test

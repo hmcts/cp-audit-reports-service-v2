@@ -51,7 +51,7 @@ public record AuditReportsService(
         BlobServiceClient  blobServiceClient,
         Function<TokenRequestContext, AccessToken> azureAccess
 ) {
-    private static final String PARTITION = "1";
+    /* default */ static final String PARTITION = "1";
 
     public List<Report> getReports() {
         final ReportListing listing = new ReportListing(azure, blobServiceClient);
