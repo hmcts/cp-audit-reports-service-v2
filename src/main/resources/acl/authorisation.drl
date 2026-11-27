@@ -48,10 +48,10 @@ then
   $o.setSuccess(true);
 end
 
-rule "Allow GET /reports for Auditors"
+rule "Allow report listing and workbook bundles for Auditors"
 when
   $o: Outcome()
-  $a: Action(name == "GET /reports")
+  $a: Action(name in ("GET /reports", "GET /reports/bundle"))
   eval(userAndGroupProvider.isMemberOfAnyOfTheSuppliedGroups($a, "Auditors")) and
   eval(userAndGroupProvider.hasPermission($a, "{\"object\":\"Crime Platform Audit\",\"action\":\"create\"}"))
 then

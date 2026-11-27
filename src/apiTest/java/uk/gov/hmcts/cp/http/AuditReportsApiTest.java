@@ -3,16 +3,19 @@ package uk.gov.hmcts.cp.http;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.cp.http.base.ApiTestBase;
+import uk.gov.hmcts.cp.openapi.model.AuditReportListingItem;
 import uk.gov.hmcts.cp.openapi.model.AuditReportRequest;
 import uk.gov.hmcts.cp.openapi.model.GetReportListing200Response;
 import uk.gov.hmcts.cp.openapi.model.PostReportRequest202Response;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
+
+    private String submittedReference;
 
     public AuditReportsApiTest() {
         super(GetReportListing200Response.class);
@@ -55,7 +61,8 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
         // Then
         assertEquals(OK, response.getStatusCode());
         assertEquals("12345", response.getBody().getPipelineJobId());
-        assertEquals(15, response.getBody().getAuditReportReference().length());
+        submittedReference = response.getBody().getAuditReportReference();
+        assertEquals(15, submittedReference.length());
     }
 
     @Test
@@ -86,16 +93,23 @@ class AuditReportsApiTest extends ApiTestBase<GetReportListing200Response> {
 
     @Test
     @Order(3)
-    void get_reports_endpoint_returns_preloaded_test_data() {
+    void get_reports_endpoint_lists_newly_submitted_report_before_historical_report() {
 
         // When
         final ResponseEntity<GetReportListing200Response> response = get("/reports");
 
         // Then
         assertEquals(OK, response.getStatusCode());
-        assertEquals(2, response.getBody().getReports().size());
-        assertNotNull(response.getBody().getReports().getFirst());
-        assertEquals("550e8400-e29b-41d4-a716-446655440000", response.getBody().getReports().getFirst().getPipelineJobId().toString());
-        assertEquals(PENDING, response.getBody().getReports().getFirst().getPipelineStatus());
+        assertNotNull(response.getBody());
+        final List<AuditReportListingItem> reports = response.getBody().getReports();
+        assertEquals(2, reports.size());
+        assertNotNull(submittedReference);
+        assertEquals(submittedReference, reports.getFirst().getAuditReportReference());
+        assertNull(reports.getFirst().getPipelineJobId());
+        assertEquals(UUID.fromString("550e8400-e29b-41d4-a716-446655440000"), reports.getLast().getPipelineJobId());
+        for (final AuditReportListingItem report : reports) {
+            assertEquals(PENDING, report.getPipelineStatus());
+            assertNull(report.getDownloadUrl());
+        }
     }
 }
