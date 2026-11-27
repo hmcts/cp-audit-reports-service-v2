@@ -52,9 +52,11 @@ public record AuditReportsService(
         Function<TokenRequestContext, AccessToken> azureAccess
 ) {
     /* default */ static final String PARTITION = "1";
+    private static final String CATCH_RUNTIME_AT_CLIENT_BOUNDARY = "PMD.AvoidCatchingGenericException";
 
     public List<Report> getReports() {
-        final ReportListing listing = new ReportListing(azure, blobServiceClient);
+        final ReportListing listing;
+        listing = new ReportListing(azure, blobServiceClient);
         return reportRequests.listEntities().stream()
                 .sorted(ReportListing.NEWEST_FIRST)
                 .map(listing::safeProperties)
@@ -62,10 +64,12 @@ public record AuditReportsService(
                 .toList();
     }
 
-    @SuppressWarnings("PMD.OnlyOneReturn")
+    // If the pending row cannot be created, never dispatch a job we cannot track.
+    @SuppressWarnings({"PMD.OnlyOneReturn", CATCH_RUNTIME_AT_CLIENT_BOUNDARY})
     public Optional<ReportResult> requestReport(final ReportRequest reportRequest) {
-        final String reference = reportRequest.auditReportReference();
+        final String reference;
         final String etag;
+        reference = reportRequest.auditReportReference();
         try {
             etag = createPendingRequest(reportRequest);
         } catch (RuntimeException ex) {
@@ -76,10 +80,12 @@ public record AuditReportsService(
         return dispatch(reportRequest, etag);
     }
 
-    @SuppressWarnings("PMD.OnlyOneReturn")
+    // An unexpected credential failure occurs before any job was submitted.
+    @SuppressWarnings({"PMD.OnlyOneReturn", CATCH_RUNTIME_AT_CLIENT_BOUNDARY})
     private Optional<ReportResult> dispatch(final ReportRequest reportRequest, final String etag) {
-        final String reference = reportRequest.auditReportReference();
+        final String reference;
         final String token;
+        reference = reportRequest.auditReportReference();
         try {
             token = Optional.ofNullable(azureAccess.apply(context))
                     .map(AccessToken::getToken)
@@ -91,7 +97,16 @@ public record AuditReportsService(
             return Optional.empty();
         }
 
+        return dispatchWithToken(reportRequest, etag, token);
+    }
+
+    // An unexpected client failure during POST may leave the job acceptance unknown.
+    @SuppressWarnings({"PMD.OnlyOneReturn", CATCH_RUNTIME_AT_CLIENT_BOUNDARY})
+    private Optional<ReportResult> dispatchWithToken(final ReportRequest reportRequest, final String etag,
+                                                     final String token) {
+        final String reference;
         final ResponseEntity<Void> response;
+        reference = reportRequest.auditReportReference();
         try {
             response = submitToFabric(reportRequest, token);
         } catch (ResourceAccessException ex) {
@@ -108,7 +123,8 @@ public record AuditReportsService(
         }
 
         if (!response.getStatusCode().isSameCodeAs(ACCEPTED)) {
-            final int status = response.getStatusCode().value();
+            final int status;
+            status = response.getStatusCode().value();
             log.warn("Fabric returned HTTP {} for audit request {}", status, reference);
             if (definitiveRejection(status)) {
                 markDispatchFailed(reference, etag);
@@ -142,13 +158,16 @@ public record AuditReportsService(
     }
 
     private String createPendingRequest(final ReportRequest reportRequest) {
-        final Map<String, Object> props = objectMapper.convertValue(reportRequest, new TypeReference<>() {});
+        final Map<String, Object> props;
+        final TableEntity row;
+        final String etag;
+        props = objectMapper.convertValue(reportRequest, new TypeReference<>() {});
         props.put("downloadUrl", "");
         props.put("pipelineStatus", "PENDING");
         props.put(ReportListing.SUBMITTED_AT, Instant.now().toString());
 
-        final TableEntity row = new TableEntity(PARTITION, reportRequest.auditReportReference()).setProperties(props);
-        final String etag = reportRequests.createEntityWithResponse(row, null, Context.NONE)
+        row = new TableEntity(PARTITION, reportRequest.auditReportReference()).setProperties(props);
+        etag = reportRequests.createEntityWithResponse(row, null, Context.NONE)
                 .getHeaders().getValue(HttpHeaderName.ETAG);
         // Azure Tables' TableScrubEtagPolicy drops the closing quote from weak ETags.
         return etag != null && etag.startsWith("W/\"") && !etag.endsWith("\"") ? etag + "\"" : etag;
@@ -177,7 +196,14 @@ public record AuditReportsService(
             return;
         }
 
-        final TableEntity failed = new TableEntity(PARTITION, reference)
+        markKnownRowFailed(reference, etag);
+    }
+
+    // A failed conditional write must not trigger an unconditional overwrite or retry.
+    @SuppressWarnings(CATCH_RUNTIME_AT_CLIENT_BOUNDARY)
+    private void markKnownRowFailed(final String reference, final String etag) {
+        final TableEntity failed;
+        failed = new TableEntity(PARTITION, reference)
                 .addProperty("odata.etag", etag)
                 .addProperty("pipelineStatus", "FAILED")
                 .addProperty("downloadUrl", "");

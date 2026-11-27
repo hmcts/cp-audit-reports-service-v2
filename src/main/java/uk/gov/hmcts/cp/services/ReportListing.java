@@ -36,7 +36,8 @@ record ReportListing(AzureProperties azure, BlobServiceClient blobServiceClient)
             Comparator.comparing(ReportListing::submissionTime).reversed().thenComparing(TableEntity::getRowKey);
 
     private static Instant submissionTime(final TableEntity entity) {
-        final Map<String, Object> properties = entity.getProperties();
+        final Map<String, Object> properties;
+        properties = entity.getProperties();
         return parseInstant(properties.get(SUBMITTED_AT))
                 .or(() -> parseInstant(properties.get("pipelineStartTime")))
                 .orElseGet(() -> referenceDate(entity.getRowKey()));
@@ -67,7 +68,8 @@ record ReportListing(AzureProperties azure, BlobServiceClient blobServiceClient)
     }
 
     /* default */ Map<String, Object> safeProperties(final TableEntity entity) {
-        final Map<String, Object> properties = new HashMap<>(entity.getProperties());
+        final Map<String, Object> properties;
+        properties = new HashMap<>(entity.getProperties());
         properties.remove(SUBMITTED_AT);
         properties.remove("pipelineStatusDescription");
         if (!HearingId.isValid(properties.get("hearingId") instanceof String id ? id : null)) {
@@ -96,8 +98,10 @@ record ReportListing(AzureProperties azure, BlobServiceClient blobServiceClient)
 
     /* default */ static Optional<String> circulationBlobName(
             final URI endpoint, final URI url, final boolean pseudonymisedOnly) {
-        final String prefix = endpoint.getPath().replaceFirst("/$", "") + "/" + CIRCULATION_CONTAINER + "/";
-        final boolean sameEndpoint = endpoint.getHost() != null && endpoint.getHost().equalsIgnoreCase(url.getHost())
+        final String prefix;
+        final boolean sameEndpoint;
+        prefix = endpoint.getPath().replaceFirst("/$", "") + "/" + CIRCULATION_CONTAINER + "/";
+        sameEndpoint = endpoint.getHost() != null && endpoint.getHost().equalsIgnoreCase(url.getHost())
                 && endpoint.getScheme().equalsIgnoreCase(url.getScheme()) && endpoint.getPort() == url.getPort();
         return Optional.of(url).filter(candidate -> sameEndpoint && candidate.getUserInfo() == null
                         && candidate.getQuery() == null && candidate.getFragment() == null
@@ -107,7 +111,8 @@ record ReportListing(AzureProperties azure, BlobServiceClient blobServiceClient)
     }
 
     private static boolean isAllowedBlobName(final String name, final boolean pseudonymisedOnly) {
-        final String lower = name.toLowerCase(Locale.ROOT);
+        final String lower;
+        lower = name.toLowerCase(Locale.ROOT);
         return BLOB_PATH.matcher(name).matches()
                 && Arrays.stream(name.split("/", -1)).noneMatch(s -> s.isEmpty() || ".".equals(s) || "..".equals(s))
                 && !lower.contains("_internal_with_key")
@@ -120,11 +125,16 @@ record ReportListing(AzureProperties azure, BlobServiceClient blobServiceClient)
     }
 
     private Optional<String> signBlob(final String url, final String name) {
-        final BlobClient blob = blobServiceClient.getBlobContainerClient(CIRCULATION_CONTAINER).getBlobClient(name);
-        final OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        final OffsetDateTime end = start.plusMinutes(azure.downloadUrlMinutesValid());
-        final UserDelegationKey key = blobServiceClient.getUserDelegationKey(start, end);
-        final String sas = blob.generateUserDelegationSas(
+        final BlobClient blob;
+        final OffsetDateTime start;
+        final OffsetDateTime end;
+        final UserDelegationKey key;
+        final String sas;
+        blob = blobServiceClient.getBlobContainerClient(CIRCULATION_CONTAINER).getBlobClient(name);
+        start = OffsetDateTime.now(ZoneOffset.UTC);
+        end = start.plusMinutes(azure.downloadUrlMinutesValid());
+        key = blobServiceClient.getUserDelegationKey(start, end);
+        sas = blob.generateUserDelegationSas(
                 new BlobServiceSasSignatureValues(end, BlobSasPermission.parse("r")), key);
         return sas == null || sas.isBlank() ? Optional.empty() : Optional.of(url + "?" + sas);
     }

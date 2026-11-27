@@ -2,6 +2,7 @@ package uk.gov.hmcts.cp.services;
 
 import com.azure.core.util.Context;
 import com.azure.data.tables.TableClient;
+import com.azure.data.tables.models.TableEntity;
 import com.azure.data.tables.models.TableServiceException;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -24,6 +25,7 @@ import java.util.zip.ZipOutputStream;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE;
+import static org.springframework.http.HttpStatus.PRECONDITION_FAILED;
 
 @Service
 public record ReportBundleService(TableClient reportRequests, BlobServiceClient blobs, AzureProperties azure) {
@@ -36,27 +38,33 @@ public record ReportBundleService(TableClient reportRequests, BlobServiceClient 
         if (!REFERENCE.matcher(reference).matches()) {
             throw new ResponseStatusException(BAD_REQUEST, "Invalid audit report reference");
         }
-        final String path = circulationPath(reference);
-        final String keyPath = path.substring(0, path.length() - ".xlsx".length()) + "_internal_with_key.xlsx";
-        final BlobClient report = blobs.getBlobContainerClient(ReportListing.CIRCULATION_CONTAINER).getBlobClient(path);
-        final BlobClient internal = blobs.getBlobContainerClient(KEY_CONTAINER).getBlobClient(keyPath);
+
+        return downloadPair(reference);
+    }
+
+    private byte[] downloadPair(final String reference) throws IOException {
+        final String path;
+        final String keyPath;
+        final BlobClient report;
+        final BlobClient internal;
+        path = circulationPath(reference);
+        keyPath = path.substring(0, path.length() - ".xlsx".length()) + "_internal_with_key.xlsx";
+        report = blobs.getBlobContainerClient(ReportListing.CIRCULATION_CONTAINER).getBlobClient(path);
+        internal = blobs.getBlobContainerClient(KEY_CONTAINER).getBlobClient(keyPath);
         return bundle(report, internal);
     }
 
     private String circulationPath(final String reference) {
         try {
-            final var row = reportRequests.getEntity(AuditReportsService.PARTITION, reference);
+            final TableEntity row;
+            row = reportRequests.getEntity(AuditReportsService.PARTITION, reference);
             if (!"COMPLETE".equals(row.getProperty("pipelineStatus"))
                     || !(row.getProperty("downloadUrl") instanceof String url)) {
                 throw unavailable();
             }
-            final String pattern = "report/generated/[0-9]{4}/[0-9]{2}/[0-9]{2}/report_"
-                    + Pattern.quote(reference) + "_[0-9]{6}_[0-9]{6}_pseudonymised\\.xlsx";
-            return ReportListing.circulationBlobName(URI.create(azure.blobEndpoint()), URI.create(url), true)
-                    .filter(name -> name.matches(pattern))
-                    .orElseThrow(ReportBundleService::unavailable);
+            return validatedCirculationPath(reference, url);
         } catch (TableServiceException ex) {
-            if (ex.getResponse().getStatusCode() == 404) {
+            if (ex.getResponse().getStatusCode() == NOT_FOUND.value()) {
                 throw unavailable();
             }
             throw ex;
@@ -65,29 +73,45 @@ public record ReportBundleService(TableClient reportRequests, BlobServiceClient 
         }
     }
 
+    private String validatedCirculationPath(final String reference, final String url) {
+        final String pattern;
+        pattern = "report/generated/[0-9]{4}/[0-9]{2}/[0-9]{2}/report_"
+                + Pattern.quote(reference) + "_[0-9]{6}_[0-9]{6}_pseudonymised\\.xlsx";
+        return ReportListing.circulationBlobName(URI.create(azure.blobEndpoint()), URI.create(url), true)
+                .filter(name -> name.matches(pattern))
+                .orElseThrow(ReportBundleService::unavailable);
+    }
+
     private static byte[] bundle(final BlobClient report, final BlobClient internal) throws IOException {
         try {
-            final BlobProperties reportInfo = report.getProperties();
-            final BlobProperties internalInfo = internal.getProperties();
+            final BlobProperties reportInfo;
+            final BlobProperties internalInfo;
+            reportInfo = report.getProperties();
+            internalInfo = internal.getProperties();
             if (reportInfo.getBlobSize() > MAX_WORKBOOK_BYTES
                     || internalInfo.getBlobSize() > MAX_WORKBOOK_BYTES - reportInfo.getBlobSize()) {
                 throw new ResponseStatusException(PAYLOAD_TOO_LARGE, "Audit workbooks exceed the bundle size limit");
             }
-            final ByteArrayOutputStream buffer =
-                    new ByteArrayOutputStream((int) (reportInfo.getBlobSize() + internalInfo.getBlobSize()) + 4096);
-            // Finish the archive before sending any content, so storage errors cannot produce a partial download.
-            try (ZipOutputStream zip = new ZipOutputStream(buffer)) {
-                zip.setLevel(Deflater.NO_COMPRESSION);
-                addWorkbook(zip, report, reportInfo, "pseudonymised-report.xlsx");
-                addWorkbook(zip, internal, internalInfo, "internal-report-with-identity-key.xlsx");
-            }
-            return buffer.toByteArray();
+            return writeArchive(report, reportInfo, internal, internalInfo);
         } catch (BlobStorageException ex) {
-            if (ex.getStatusCode() == 404 || ex.getStatusCode() == 412) {
+            if (ex.getStatusCode() == NOT_FOUND.value() || ex.getStatusCode() == PRECONDITION_FAILED.value()) {
                 throw unavailable();
             }
             throw ex;
         }
+    }
+
+    private static byte[] writeArchive(final BlobClient report, final BlobProperties reportInfo,
+                                       final BlobClient internal, final BlobProperties internalInfo) throws IOException {
+        final ByteArrayOutputStream buffer;
+        buffer = new ByteArrayOutputStream((int) (reportInfo.getBlobSize() + internalInfo.getBlobSize()) + 4096);
+        // Finish the archive before sending any content, so storage errors cannot produce a partial download.
+        try (ZipOutputStream zip = new ZipOutputStream(buffer)) {
+            zip.setLevel(Deflater.NO_COMPRESSION);
+            addWorkbook(zip, report, reportInfo, "pseudonymised-report.xlsx");
+            addWorkbook(zip, internal, internalInfo, "internal-report-with-identity-key.xlsx");
+        }
+        return buffer.toByteArray();
     }
 
     private static void addWorkbook(final ZipOutputStream zip, final BlobClient blob, final BlobProperties info,

@@ -24,7 +24,8 @@ public record ReportBundleController(ReportBundleService bundles) {
             @RequestParam("reference") final String reference,
             @RequestHeader("CJSCPPUID") final String caller
     ) throws IOException {
-        final byte[] bundle = bundles.download(reference);
+        final byte[] bundle;
+        bundle = bundles.download(reference);
         log.info("Restricted audit workbook bundle issued for report {} to caller {}", reference, caller);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
